@@ -22,25 +22,43 @@ public class TodoService {
         return newTodo;
     }
 
-    public void handleGetAllTodos(){
-        // List<Todo> listTodos = this.todoRepository.findAll();
-        // listTodos.forEach(todo -> System.out.printf("%s", todo.toString()));
-
-        // Optional<Todo> optionalTodo = this.todoRepository.findById(3l);
-        // if (optionalTodo.isPresent()) {
-        //     System.out.println(optionalTodo.toString());
-        // }
-        List<Todo> listTodo = this.todoRepository.findByUserName("Truong Duc Hoang demo 1");
-        listTodo.forEach(todo -> System.out.printf("%s", todo.toString()));
+    public Todo handleGetTodoById(long id){
+        Optional<Todo> optionalTodo = this.todoRepository.findById(id);
+        return optionalTodo.isPresent() ?  optionalTodo.get() : null;
     }
 
-    public void handleUpdateTodo(){
-        Optional<Todo> optionalTodo = this.todoRepository.findById(2l);
+    public List<Todo> handleGetAllTodos(){
+        return this.todoRepository.findAll();
+    }
+
+    public Todo handleUpdateTodoUsingPUT(long id, Todo inputTodo){
+        Optional<Todo> optionalTodo = this.todoRepository.findById(id);
         if(optionalTodo.isPresent()){
             Todo currentTodo = optionalTodo.get();
-            currentTodo.setCompleted(false);
-            currentTodo.setUserName("Tran Dinh Phi Hung update");
+            currentTodo.setCompleted(inputTodo.isCompleted());
+            currentTodo.setUserName(inputTodo.getUserName());
             this.todoRepository.save(currentTodo);
+            return currentTodo;
+        }else{
+            return null;
+        }
+    }
+
+    public Todo handleUpdateTodoUsingPATCH(long id, Todo inputTodo){
+        Todo existTodo = this.todoRepository.findById(id).orElse(null);
+        if(existTodo != null){
+            if(inputTodo.isCompleted() != null){
+                existTodo.setCompleted(inputTodo.isCompleted());
+            }
+
+            if(inputTodo.getUserName() != null){
+                existTodo.setUserName(inputTodo.getUserName());
+            }
+
+            this.todoRepository.save(existTodo);
+            return existTodo;
+        }else{
+            return null;
         }
     }
 

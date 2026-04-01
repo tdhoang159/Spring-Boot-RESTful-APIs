@@ -7,15 +7,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name="todos")
+@Table(name = "todos")
 public class Todo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String userName;
-    private boolean isCompleted;
+    private Boolean isCompleted;
 
-    public Todo(){
+    public Todo() {
 
     }
 
@@ -40,11 +40,11 @@ public class Todo {
         this.userName = userName;
     }
 
-    public boolean isCompleted() {
+    public Boolean isCompleted() {
         return isCompleted;
     }
-    
-    public void setCompleted(boolean isCompleted) {
+
+    public void setCompleted(Boolean isCompleted) {
         this.isCompleted = isCompleted;
     }
 
@@ -52,5 +52,5 @@ public class Todo {
     public String toString() {
         return "Todo [id=" + id + ", userName=" + userName + ", isCompleted=" + isCompleted + "]\n";
     }
-    
+
 }
