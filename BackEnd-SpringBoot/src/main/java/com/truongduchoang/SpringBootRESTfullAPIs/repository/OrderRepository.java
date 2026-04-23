@@ -1,5 +1,6 @@
 package com.truongduchoang.SpringBootRESTfullAPIs.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,4 +15,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     boolean existsByOrderCode(String orderCode);
 
     boolean existsByEventEventId(Long eventId);
+
+    List<Order> findByEvent_EventIdOrderByCreatedAtDesc(Long eventId);
+
+    List<Order> findByEvent_Organizer_OrganizerIdOrderByCreatedAtDesc(Long organizerId);
 }

@@ -250,11 +250,11 @@ CREATE TABLE IF NOT EXISTS notifications (
     CONSTRAINT fk_notifications_user FOREIGN KEY (user_id) REFERENCES users(user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO roles (role_id, role_name, description)
+INSERT INTO roles (role_id, role_name, description, created_at)
 VALUES
-    (1, 'ADMIN', 'System administrator'),
-    (2, 'ORGANIZER', 'Event organizer'),
-    (3, 'ATTENDEE', 'Event attendee')
+    (1, 'ADMIN', 'System administrator', NOW()),
+    (2, 'ORGANIZER', 'Event organizer', NOW()),
+    (3, 'ATTENDEE', 'Event attendee', NOW())
 ON DUPLICATE KEY UPDATE
     role_name = VALUES(role_name),
     description = VALUES(description);
