@@ -17,6 +17,12 @@ import com.truongduchoang.SpringBootRESTfullAPIs.models.enums.PublishStatus;
 
 @Component
 public class EventMapper {
+    private final TicketTypeMapper ticketTypeMapper;
+
+    public EventMapper(TicketTypeMapper ticketTypeMapper) {
+        this.ticketTypeMapper = ticketTypeMapper;
+    }
+
     public Event toEntity(EventCreateRequest request, Category category, OrganizerProfile organizer) {
         Event event = new Event();
         event.setCategory(category);
@@ -111,6 +117,7 @@ public class EventMapper {
         response.setApprovalStatus(event.getApprovalStatus());
         response.setCreatedAt(event.getCreatedAt());
         response.setUpdatedAt(event.getUpdatedAt());
+        response.setTicketTypes(event.getTicketTypes().stream().map(ticketTypeMapper::toResponse).toList());
         return response;
     }
 

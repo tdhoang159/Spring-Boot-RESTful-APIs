@@ -1,6 +1,7 @@
 package com.truongduchoang.SpringBootRESTfullAPIs.dto.request;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -58,9 +59,11 @@ public class EventCreateRequest {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime registrationDeadline;
 
-    private PublishStatus publishStatus;
+    private PublishStatus publishStatus = PublishStatus.DRAFT;
 
-    private ApprovalStatus approvalStatus;
+    private ApprovalStatus approvalStatus = ApprovalStatus.PENDING;
+
+    private List<TicketTypeCreateRequest> ticketTypes;
 
     public Long getOrganizerId() {
         return organizerId;
@@ -188,5 +191,13 @@ public class EventCreateRequest {
 
     public void setApprovalStatus(ApprovalStatus approvalStatus) {
         this.approvalStatus = approvalStatus;
+    }
+
+    public List<TicketTypeCreateRequest> getTicketTypes() {
+        return ticketTypes;
+    }
+
+    public void setTicketTypes(List<TicketTypeCreateRequest> ticketTypes) {
+        this.ticketTypes = ticketTypes;
     }
 }
