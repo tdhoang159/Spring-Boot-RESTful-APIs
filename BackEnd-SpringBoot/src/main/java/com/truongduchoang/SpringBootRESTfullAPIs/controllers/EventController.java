@@ -2,6 +2,10 @@ package com.truongduchoang.SpringBootRESTfullAPIs.controllers;
 
 import java.util.List;
 
+import com.truongduchoang.SpringBootRESTfullAPIs.dto.request.EventSearchRequest;
+import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.EventDetailResponse;
+import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.EventSummaryResponse;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -116,4 +120,24 @@ public class EventController {
                 null);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(result);
     }
+
+    @GetMapping("/api/v1/events")
+    public ResponseEntity<Page<EventSummaryResponse>> getApprovedEvents(
+            @Valid @ModelAttribute EventSearchRequest request) {
+
+        Page<EventSummaryResponse> result = eventService.getApprovedEvents(request);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/api/v1/events/{slug}")
+    public ResponseEntity<EventDetailResponse> getApprovedEventBySlug(@PathVariable String slug) {
+        EventDetailResponse result = eventService.getApprovedEventBySlug(slug);
+        return ResponseEntity.ok(result);
+    }
+
+
+
+
+
+
 }

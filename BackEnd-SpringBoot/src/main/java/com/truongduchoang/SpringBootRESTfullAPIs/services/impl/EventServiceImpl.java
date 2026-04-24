@@ -1,8 +1,19 @@
 package com.truongduchoang.SpringBootRESTfullAPIs.services.impl;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
+
+
+import com.truongduchoang.SpringBootRESTfullAPIs.dto.request.EventSearchRequest;
+import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.EventDetailResponse;
+import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.EventSummaryResponse;
+import com.truongduchoang.SpringBootRESTfullAPIs.models.enums.ApprovalStatus;
+import com.truongduchoang.SpringBootRESTfullAPIs.repository.*;
+import jakarta.persistence.criteria.Predicate;
+import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,17 +29,13 @@ import com.truongduchoang.SpringBootRESTfullAPIs.mapper.EventMapper;
 import com.truongduchoang.SpringBootRESTfullAPIs.models.Category;
 import com.truongduchoang.SpringBootRESTfullAPIs.models.Event;
 import com.truongduchoang.SpringBootRESTfullAPIs.models.OrganizerProfile;
-import com.truongduchoang.SpringBootRESTfullAPIs.repository.CategoryRepository;
-import com.truongduchoang.SpringBootRESTfullAPIs.repository.EventRepository;
-import com.truongduchoang.SpringBootRESTfullAPIs.repository.OrderRepository;
-import com.truongduchoang.SpringBootRESTfullAPIs.repository.OrganizerProfileRepository;
-import com.truongduchoang.SpringBootRESTfullAPIs.repository.TicketRepository;
 import com.truongduchoang.SpringBootRESTfullAPIs.services.CloudinaryService;
 import com.truongduchoang.SpringBootRESTfullAPIs.services.EventService;
 
 @Service
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
+    private final EventApprovalRepository eventApprovalRepository;
     private final CategoryRepository categoryRepository;
     private final OrganizerProfileRepository organizerProfileRepository;
     private final OrderRepository orderRepository;
@@ -37,7 +44,7 @@ public class EventServiceImpl implements EventService {
     private final CloudinaryService cloudinaryService;
 
     public EventServiceImpl(
-            EventRepository eventRepository,
+            EventRepository eventRepository, EventApprovalRepository eventApprovalRepository,
             CategoryRepository categoryRepository,
             OrganizerProfileRepository organizerProfileRepository,
             OrderRepository orderRepository,
@@ -45,6 +52,7 @@ public class EventServiceImpl implements EventService {
             EventMapper eventMapper,
             CloudinaryService cloudinaryService) {
         this.eventRepository = eventRepository;
+        this.eventApprovalRepository = eventApprovalRepository;
         this.categoryRepository = categoryRepository;
         this.organizerProfileRepository = organizerProfileRepository;
         this.orderRepository = orderRepository;
@@ -124,6 +132,77 @@ public class EventServiceImpl implements EventService {
         }
         eventRepository.delete(event);
     }
+
+    @Override
+    public Page<EventSummaryResponse> getApprovedEvents(EventSearchRequest req) {
+        //List<Long>approvedEventIds = eventApprovalRepository.findByApprovalStatus(ApprovalStatus.APPROVED);
+        List<Long> approvedEventIds = eventApprovalRepository.findEventIdsByApprovalStatus(ApprovalStatus.APPROVED);
+        if(approvedEventIds.isEmpty()) return Page.empty();
+
+        Specification<Event> spec = (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+
+            predicates.add(root.get("eventId").in(approvedEventIds));
+
+            if (req.getKeyword() != null && !req.getKeyword().isBlank()) {
+                String likePattern = "%" + req.getKeyword().trim().toLowerCase() + "%";
+                predicates.add(cb.or(
+                        cb.like(cb.lower(root.get("title")), likePattern),
+                        cb.like(cb.lower(root.get("shortDescription")), likePattern)
+                ));
+            }
+
+            // Lọc theo category
+            if (req.getCategoryId() != null) {
+                predicates.add(cb.equal(root.get("category").get("categoryId"), req.getCategoryId()));
+            }
+
+            // Lọc theo city
+            if (req.getCity() != null && !req.getCity().isBlank()) {
+                predicates.add(cb.like(
+                        cb.lower(root.get("city")),
+                        "%" + req.getCity().trim().toLowerCase() + "%"
+                ));
+            }
+
+            // Lọc theo ngày (startTime trong ngày đó)
+            if (req.getDate() != null) {
+                LocalDateTime startOfDay = req.getDate().atStartOfDay();
+                LocalDateTime endOfDay   = req.getDate().atTime(23, 59, 59);
+                predicates.add(cb.between(root.get("startTime"), startOfDay, endOfDay));
+            }
+
+            // Lọc theo loại hình (ONLINE / OFFLINE)
+            if (req.getLocationType() != null) {
+                predicates.add(cb.equal(root.get("locationType"), req.getLocationType()));
+            }
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+
+        // 3. Build Pageable với sort
+        Sort sort = req.getSortDir().equalsIgnoreCase("desc")
+                ? Sort.by(req.getSortBy()).descending()
+                : Sort.by(req.getSortBy()).ascending();
+
+        Pageable pageable = PageRequest.of(req.getPage(), req.getSize(), sort);
+
+        // 4. Query + map sang DTO
+        Page<Event> eventPage = eventRepository.findAll(spec, pageable);
+
+        return eventPage.map(eventMapper::toSummaryResponse);
+    }
+
+    @Override
+    public EventDetailResponse getApprovedEventBySlug(String slug) {
+        Event event = eventRepository.findBySlugAndApprovalStatus(slug, ApprovalStatus.APPROVED)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Event with slug " + slug + " not found or not approved yet",
+                        "EVENT_NOT_FOUND"));
+        return eventMapper.toDetailResponse(event);
+    }
+
 
     private Event findEventById(Long id) {
         return eventRepository.findById(id)
