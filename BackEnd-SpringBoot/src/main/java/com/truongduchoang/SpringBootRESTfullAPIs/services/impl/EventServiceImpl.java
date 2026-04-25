@@ -18,12 +18,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.request.EventCreateRequest;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.request.EventUpdateRequest;
-import com.truongduchoang.SpringBootRESTfullAPIs.dto.request.SendEventNotificationRequest;
+import com.truongduchoang.SpringBootRESTfullAPIs.dto.request.SendEventEmailRequest;
+import com.truongduchoang.SpringBootRESTfullAPIs.dto.request.TicketCheckinRequest;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.EventRegistrationResponse;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.EventResponse;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.EventTicketSalesSummaryResponse;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.MediaUploadResponse;
-import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.SendEventNotificationResponse;
+import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.SendEventEmailResponse;
+import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.TicketCheckinResponse;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.TicketSalesReportResponse;
 import com.truongduchoang.SpringBootRESTfullAPIs.errors.BadRequestException;
 import com.truongduchoang.SpringBootRESTfullAPIs.errors.DuplicateResourceException;
@@ -31,17 +33,21 @@ import com.truongduchoang.SpringBootRESTfullAPIs.errors.ResourceNotFoundExceptio
 import com.truongduchoang.SpringBootRESTfullAPIs.mapper.EventMapper;
 import com.truongduchoang.SpringBootRESTfullAPIs.mapper.TicketTypeMapper;
 import com.truongduchoang.SpringBootRESTfullAPIs.models.Category;
+import com.truongduchoang.SpringBootRESTfullAPIs.models.Checkin;
 import com.truongduchoang.SpringBootRESTfullAPIs.models.EmailCampaign;
 import com.truongduchoang.SpringBootRESTfullAPIs.models.Event;
 import com.truongduchoang.SpringBootRESTfullAPIs.models.Order;
 import com.truongduchoang.SpringBootRESTfullAPIs.models.OrderItem;
 import com.truongduchoang.SpringBootRESTfullAPIs.models.OrganizerProfile;
+import com.truongduchoang.SpringBootRESTfullAPIs.models.Ticket;
 import com.truongduchoang.SpringBootRESTfullAPIs.models.TicketType;
 import com.truongduchoang.SpringBootRESTfullAPIs.models.User;
 import com.truongduchoang.SpringBootRESTfullAPIs.models.enums.EmailSendStatus;
 import com.truongduchoang.SpringBootRESTfullAPIs.models.enums.OrderPaymentStatus;
 import com.truongduchoang.SpringBootRESTfullAPIs.models.enums.PublishStatus;
+import com.truongduchoang.SpringBootRESTfullAPIs.models.enums.TicketStatus;
 import com.truongduchoang.SpringBootRESTfullAPIs.repository.CategoryRepository;
+import com.truongduchoang.SpringBootRESTfullAPIs.repository.CheckinRepository;
 import com.truongduchoang.SpringBootRESTfullAPIs.repository.EmailCampaignRepository;
 import com.truongduchoang.SpringBootRESTfullAPIs.repository.EventRepository;
 import com.truongduchoang.SpringBootRESTfullAPIs.repository.OrderRepository;
@@ -61,6 +67,7 @@ public class EventServiceImpl implements EventService {
     private final OrderRepository orderRepository;
     private final TicketRepository ticketRepository;
     private final TicketTypeRepository ticketTypeRepository;
+    private final CheckinRepository checkinRepository;
     private final EventMapper eventMapper;
     private final TicketTypeMapper ticketTypeMapper;
     private final CloudinaryService cloudinaryService;
@@ -74,6 +81,7 @@ public class EventServiceImpl implements EventService {
             OrderRepository orderRepository,
             TicketRepository ticketRepository,
             TicketTypeRepository ticketTypeRepository,
+            CheckinRepository checkinRepository,
             EventMapper eventMapper,
             TicketTypeMapper ticketTypeMapper,
             CloudinaryService cloudinaryService,
@@ -85,6 +93,7 @@ public class EventServiceImpl implements EventService {
         this.orderRepository = orderRepository;
         this.ticketRepository = ticketRepository;
         this.ticketTypeRepository = ticketTypeRepository;
+        this.checkinRepository = checkinRepository;
         this.eventMapper = eventMapper;
         this.ticketTypeMapper = ticketTypeMapper;
         this.cloudinaryService = cloudinaryService;
@@ -268,7 +277,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public SendEventNotificationResponse sendEventNotification(Long organizerId, Long eventId, SendEventNotificationRequest request) {
+    public SendEventEmailResponse sendEventEmail(Long organizerId, Long eventId, SendEventEmailRequest request) {
         if (request.getSubject() == null || request.getSubject().isBlank()) {
             throw new IllegalArgumentException("Email subject is required");
         }
@@ -290,7 +299,7 @@ public class EventServiceImpl implements EventService {
 
         List<String> recipients = new ArrayList<>(emailSet);
         if (recipients.isEmpty()) {
-            return new SendEventNotificationResponse(null, 0, "No recipients found for event");
+            return new SendEventEmailResponse(null, 0, "No recipients found for event");
         }
 
         User createdBy = event.getOrganizer().getUser();
@@ -305,7 +314,7 @@ public class EventServiceImpl implements EventService {
         campaign.setSentAt(LocalDateTime.now());
         EmailCampaign savedCampaign = emailCampaignRepository.save(campaign);
 
-        return new SendEventNotificationResponse(savedCampaign.getCampaignId(), recipients.size(), "Email sent successfully to " + recipients.size() + " recipients");
+        return new SendEventEmailResponse(savedCampaign.getCampaignId(), recipients.size(), "Email sent successfully to " + recipients.size() + " recipients");
     }
 
     @Override
@@ -408,6 +417,49 @@ public class EventServiceImpl implements EventService {
         return eventMapper.toResponse(eventRepository.save(event));
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public TicketCheckinResponse getTicketCheckinInfo(Long organizerId, TicketCheckinRequest request) {
+        Ticket ticket = findTicketByCode(request.getTicketCode());
+        validateTicketBelongsToOrganizer(ticket, organizerId);
+        validateRequestedEvent(ticket, request.getEventId());
+        return mapToTicketCheckinResponse(ticket);
+    }
+
+    @Override
+    @Transactional
+    public TicketCheckinResponse checkInTicket(Long organizerId, TicketCheckinRequest request) {
+        Ticket ticket = findTicketByCode(request.getTicketCode());
+        validateTicketBelongsToOrganizer(ticket, organizerId);
+        validateRequestedEvent(ticket, request.getEventId());
+
+        if (ticket.getStatus() == TicketStatus.USED) {
+            throw new BadRequestException("Ticket has already been checked in", "TICKET_ALREADY_CHECKED_IN");
+        }
+        if (ticket.getStatus() != TicketStatus.VALID) {
+            throw new BadRequestException("Ticket is not valid for check-in", "TICKET_NOT_VALID_FOR_CHECKIN");
+        }
+
+        OrganizerProfile organizer = findOrganizerById(organizerId);
+        LocalDateTime checkinTime = LocalDateTime.now();
+
+        ticket.setStatus(TicketStatus.USED);
+        ticket.setCheckedInAt(checkinTime);
+        Ticket savedTicket = ticketRepository.save(ticket);
+
+        Checkin checkin = new Checkin();
+        checkin.setTicket(savedTicket);
+        checkin.setEvent(savedTicket.getEvent());
+        checkin.setCheckedInBy(organizer.getUser());
+        checkin.setCheckinTime(checkinTime);
+        if (StringUtils.hasText(request.getGateName())) {
+            checkin.setGateName(request.getGateName().trim());
+        }
+        checkinRepository.save(checkin);
+
+        return mapToTicketCheckinResponse(savedTicket);
+    }
+
     private Event getOrganizerEvent(Long organizerId, Long eventId) {
         OrganizerProfile organizer = organizerProfileRepository.findById(organizerId)
                 .orElseThrow(() -> new NoSuchElementException("Organizer with id " + organizerId + " not found"));
@@ -420,5 +472,49 @@ public class EventServiceImpl implements EventService {
         }
 
         return event;
+    }
+
+    private Ticket findTicketByCode(String ticketCode) {
+        if (!StringUtils.hasText(ticketCode)) {
+            throw new BadRequestException("ticketCode is required", "TICKET_CODE_REQUIRED");
+        }
+        return ticketRepository.findByTicketCode(ticketCode.trim())
+                .orElseThrow(() -> new ResourceNotFoundException("Ticket not found", "TICKET_NOT_FOUND"));
+    }
+
+    private void validateTicketBelongsToOrganizer(Ticket ticket, Long organizerId) {
+        Long ticketOrganizerId = ticket.getEvent() != null
+                && ticket.getEvent().getOrganizer() != null
+                ? ticket.getEvent().getOrganizer().getOrganizerId()
+                : null;
+        if (ticketOrganizerId == null || !ticketOrganizerId.equals(organizerId)) {
+            throw new BadRequestException("Ticket does not belong to organizer", "TICKET_ORGANIZER_MISMATCH");
+        }
+    }
+
+    private void validateRequestedEvent(Ticket ticket, Long requestedEventId) {
+        if (requestedEventId == null) {
+            return;
+        }
+        Long ticketEventId = ticket.getEvent() != null ? ticket.getEvent().getEventId() : null;
+        if (ticketEventId == null || !ticketEventId.equals(requestedEventId)) {
+            throw new BadRequestException("Ticket does not belong to requested event", "TICKET_EVENT_MISMATCH");
+        }
+    }
+
+    private TicketCheckinResponse mapToTicketCheckinResponse(Ticket ticket) {
+        TicketCheckinResponse response = new TicketCheckinResponse();
+        response.setTicketCode(ticket.getTicketCode());
+        response.setStatus(ticket.getStatus() != null ? ticket.getStatus().name() : null);
+        response.setAttendeeName(ticket.getAttendeeName());
+        response.setAttendeeEmail(ticket.getAttendeeEmail());
+        response.setEventId(ticket.getEvent() != null ? ticket.getEvent().getEventId() : null);
+        response.setEventTitle(ticket.getEvent() != null ? ticket.getEvent().getTitle() : null);
+        response.setTicketTypeId(ticket.getTicketType() != null ? ticket.getTicketType().getTicketTypeId() : null);
+        response.setTicketTypeName(ticket.getTicketType() != null ? ticket.getTicketType().getTicketName() : null);
+        response.setIssuedAt(ticket.getIssuedAt());
+        response.setCheckedIn(ticket.getStatus() == TicketStatus.USED);
+        response.setCheckedInAt(ticket.getCheckedInAt());
+        return response;
     }
 }

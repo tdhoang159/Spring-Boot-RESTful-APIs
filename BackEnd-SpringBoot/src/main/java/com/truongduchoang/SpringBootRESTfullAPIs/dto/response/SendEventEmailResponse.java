@@ -1,15 +1,15 @@
 package com.truongduchoang.SpringBootRESTfullAPIs.dto.response;
 
-public class SendEventNotificationResponse {
+public class SendEventEmailResponse {
 
     private Long campaignId;
     private Integer recipientCount;
     private String message;
 
-    public SendEventNotificationResponse() {
+    public SendEventEmailResponse() {
     }
 
-    public SendEventNotificationResponse(Long campaignId, Integer recipientCount, String message) {
+    public SendEventEmailResponse(Long campaignId, Integer recipientCount, String message) {
         this.campaignId = campaignId;
         this.recipientCount = recipientCount;
         this.message = message;
