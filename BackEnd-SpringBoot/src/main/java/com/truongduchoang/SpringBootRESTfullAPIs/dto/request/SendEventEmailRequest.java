@@ -1,6 +1,6 @@
 package com.truongduchoang.SpringBootRESTfullAPIs.dto.request;
 
-public class SendEventNotificationRequest {
+public class SendEventEmailRequest {
 
     private String subject;
     private String content;
