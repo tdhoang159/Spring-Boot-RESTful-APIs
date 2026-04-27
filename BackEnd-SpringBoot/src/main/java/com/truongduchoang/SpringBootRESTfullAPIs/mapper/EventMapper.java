@@ -1,25 +1,31 @@
 package com.truongduchoang.SpringBootRESTfullAPIs.mapper;
 
-import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
+import java.util.List;
 
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.request.EventCreateRequest;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.request.EventUpdateRequest;
+import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.CategorySummaryResponse;
+import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.EventDetailResponse;
+import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.EventResponse;
+import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.EventSummaryResponse;
+import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.OrganizerSummaryResponse;
+import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.TicketTypeResponse;
 import com.truongduchoang.SpringBootRESTfullAPIs.models.Category;
 import com.truongduchoang.SpringBootRESTfullAPIs.models.Event;
 import com.truongduchoang.SpringBootRESTfullAPIs.models.OrganizerProfile;
 import com.truongduchoang.SpringBootRESTfullAPIs.models.User;
 import com.truongduchoang.SpringBootRESTfullAPIs.models.enums.ApprovalStatus;
 import com.truongduchoang.SpringBootRESTfullAPIs.models.enums.PublishStatus;
-
-import java.util.List;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 @Component
 public class EventMapper {
-    @Autowired
-    private TicketTypeMapper ticketTypeMapper;
+    private final TicketTypeMapper ticketTypeMapper;
+
+    public EventMapper(TicketTypeMapper ticketTypeMapper) {
+        this.ticketTypeMapper = ticketTypeMapper;
+    }
 
     public Event toEntity(EventCreateRequest request, Category category, OrganizerProfile organizer) {
         Event event = new Event();
@@ -115,6 +121,9 @@ public class EventMapper {
         response.setApprovalStatus(event.getApprovalStatus());
         response.setCreatedAt(event.getCreatedAt());
         response.setUpdatedAt(event.getUpdatedAt());
+        if (event.getTicketTypes() != null) {
+            response.setTicketTypes(event.getTicketTypes().stream().map(ticketTypeMapper::toResponse).toList());
+        }
         return response;
     }
 
@@ -150,20 +159,19 @@ public class EventMapper {
         dto.setEndTime(event.getEndTime());
         dto.setLocationType(event.getLocationType());
 
-        // Nếu quan hệ lazy → đảm bảo đã fetch hoặc dùng JOIN FETCH trong repo
         if (event.getCategory() != null) {
             dto.setCategoryName(event.getCategory().getCategoryName());
         }
         if (event.getOrganizer() != null) {
-            dto.setOrganizerName(event.getOrganizer().getOrganizationName()); // tuỳ field thực tế
+            dto.setOrganizerName(event.getOrganizer().getOrganizationName());
         }
-
-        // Giá vé rẻ nhất — nếu Event có collection ticketTypes
-        event.getTicketTypes().stream()
-                .map(t -> t.getPrice())
-                .filter(p -> p != null)
-                .min(java.util.Comparator.naturalOrder())
-                .ifPresent(dto::setMinPrice);
+        if (event.getTicketTypes() != null) {
+            event.getTicketTypes().stream()
+                    .map(EventMapper::priceOf)
+                    .filter(price -> price != null)
+                    .min(java.util.Comparator.naturalOrder())
+                    .ifPresent(dto::setMinPrice);
+        }
 
         return dto;
     }
@@ -185,24 +193,27 @@ public class EventMapper {
         response.setEndTime(event.getEndTime());
         response.setRegistrationDeadline(event.getRegistrationDeadline());
 
-
-        // Organizer detail
         if (event.getOrganizer() != null) {
             OrganizerProfile organizer = event.getOrganizer();
-            User user = organizer.getUser();
             response.setOrganizerWebsite(organizer.getWebsite());
             response.setOrganizerDescription(organizer.getDescription());
             response.setOrganizerIsVerified(organizer.getIsVerified());
+            if (organizer.getUser() != null) {
+                response.setOrganizerName(organizer.getUser().getFullName());
+            }
         }
 
-        // Danh sách loại vé
         if (event.getTicketTypes() != null) {
             List<TicketTypeResponse> ticketTypeResponses = event.getTicketTypes().stream()
-                    .map(ticketTypeMapper::toTicketTypeResponse)
+                    .map(ticketTypeMapper::toResponse)
                     .toList();
             response.setTicketTypes(ticketTypeResponses);
         }
 
         return response;
+    }
+
+    private static java.math.BigDecimal priceOf(com.truongduchoang.SpringBootRESTfullAPIs.models.TicketType ticketType) {
+        return ticketType.getPrice();
     }
 }

@@ -1,6 +1,7 @@
 package com.truongduchoang.SpringBootRESTfullAPIs.dto.response;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.truongduchoang.SpringBootRESTfullAPIs.models.enums.ApprovalStatus;
 import com.truongduchoang.SpringBootRESTfullAPIs.models.enums.LocationType;
@@ -27,6 +28,7 @@ public class EventResponse {
     private ApprovalStatus approvalStatus;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private List<TicketTypeResponse> ticketTypes;
 
     public Long getEventId() {
         return eventId;
@@ -186,5 +188,13 @@ public class EventResponse {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public List<TicketTypeResponse> getTicketTypes() {
+        return ticketTypes;
+    }
+
+    public void setTicketTypes(List<TicketTypeResponse> ticketTypes) {
+        this.ticketTypes = ticketTypes;
     }
 }

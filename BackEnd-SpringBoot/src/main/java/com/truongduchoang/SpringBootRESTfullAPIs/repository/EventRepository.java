@@ -1,16 +1,16 @@
 package com.truongduchoang.SpringBootRESTfullAPIs.repository;
 
-
+import java.util.List;
 import java.util.Optional;
 
+import com.truongduchoang.SpringBootRESTfullAPIs.models.Event;
 import com.truongduchoang.SpringBootRESTfullAPIs.models.enums.ApprovalStatus;
+import com.truongduchoang.SpringBootRESTfullAPIs.models.enums.PublishStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import com.truongduchoang.SpringBootRESTfullAPIs.models.Event;
 
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
@@ -24,11 +24,11 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     boolean existsByOrganizerOrganizerId(Long organizerId);
 
-    //List<Long> findEventIdsByStatus(ApprovalStatus approvalStatus);
-
     Page<Event> findAll(Specification<Event> spec, Pageable pageable);
 
     Optional<Event> findBySlugAndApprovalStatus(String slug, ApprovalStatus approvalStatus);
 
+    List<Event> findByOrganizer_OrganizerIdOrderByCreatedAtDesc(Long organizerId);
 
+    List<Event> findByOrganizer_OrganizerIdAndPublishStatusOrderByCreatedAtDesc(Long organizerId, PublishStatus publishStatus);
 }

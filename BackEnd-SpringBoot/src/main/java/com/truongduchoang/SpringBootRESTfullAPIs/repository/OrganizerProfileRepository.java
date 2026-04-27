@@ -9,5 +9,5 @@ import com.truongduchoang.SpringBootRESTfullAPIs.models.OrganizerProfile;
 
 @Repository
 public interface OrganizerProfileRepository extends JpaRepository<OrganizerProfile, Long> {
-    Optional<OrganizerProfile> findByUserUserId(Long userId);
+    Optional<OrganizerProfile> findByUser_UserId(Long userId);
 }
