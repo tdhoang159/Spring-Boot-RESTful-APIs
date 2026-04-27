@@ -1,0 +1,110 @@
+export type OrganizerInfo = {
+    organizerId: number;
+    organizationName: string;
+    userId: number;
+    userFullName: string;
+};
+
+export type EventCategory = {
+    categoryId: number;
+    categoryName: string;
+};
+
+export type CategoryItem = {
+    categoryId: number;
+    categoryName: string;
+    description: string | null;
+    status: string;
+    createdAt: string;
+};
+
+export type TicketTypeInfo = {
+    ticketTypeId: number;
+    ticketName: string;
+    description: string | null;
+    price: number;
+    quantityTotal: number;
+    maxPerOrder: number;
+    saleStartTime: string | null;
+    saleEndTime: string | null;
+    status: string;
+};
+
+export type OrganizerEvent = {
+    eventId: number;
+    organizer: OrganizerInfo;
+    category: EventCategory | null;
+    title: string;
+    slug: string;
+    shortDescription: string | null;
+    description: string | null;
+    bannerUrl: string | null;
+    venueName: string | null;
+    venueAddress: string | null;
+    city: string | null;
+    locationType: "OFFLINE" | "ONLINE" | "HYBRID" | string;
+    meetingUrl: string | null;
+    startTime: string;
+    endTime: string;
+    registrationDeadline: string | null;
+    publishStatus: "PUBLISHED" | "UNPUBLISHED" | "DRAFT" | string;
+    approvalStatus: "APPROVED" | "PENDING" | "REJECTED" | "DRAFT" | string;
+    createdAt: string;
+    updatedAt: string | null;
+    ticketTypes: TicketTypeInfo[];
+};
+
+export type OrganizerEventsResponse = {
+    status: string;
+    message: string;
+    data: OrganizerEvent[];
+    errorCode: string | null;
+    timeStamp: string;
+};
+
+export type CategoriesResponse = {
+    status: string;
+    message: string;
+    data: CategoryItem[];
+    errorCode: string | null;
+    timeStamp: string;
+};
+
+export type RegistrationTicket = {
+    ticketId: number;
+    orderItemId: number;
+    ticketTypeId: number;
+    ticketTypeName: string;
+    ticketCode: string;
+    attendeeName: string;
+    attendeeEmail: string;
+    status: "VALID" | "USED" | "CANCELLED" | "EXPIRED" | string;
+    issuedAt: string;
+    checkedInAt: string | null;
+};
+
+export type EventRegistration = {
+    orderId: number;
+    userId: number;
+    eventId: number;
+    fullName: string;
+    email: string;
+    phone: string | null;
+    buyerName: string;
+    buyerEmail: string;
+    buyerPhone: string | null;
+    totalTickets: number;
+    finalAmount: number;
+    paymentStatus: "UNPAID" | "PAID" | "FAILED" | "REFUNDED" | string;
+    orderStatus: "PENDING" | "CONFIRMED" | "CANCELLED" | "EXPIRED" | string;
+    registeredAt: string;
+    tickets: RegistrationTicket[];
+};
+
+export type EventRegistrationsResponse = {
+    status: string;
+    message: string;
+    data: EventRegistration[];
+    errorCode: string | null;
+    timeStamp: string;
+};

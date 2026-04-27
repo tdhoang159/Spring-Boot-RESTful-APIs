@@ -21,9 +21,11 @@ import com.truongduchoang.SpringBootRESTfullAPIs.dto.request.EventUpdateRequest;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.request.SendEventEmailRequest;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.request.TicketCheckinRequest;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.EventRegistrationResponse;
+import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.EventRegistrationTicketResponse;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.EventResponse;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.EventTicketSalesSummaryResponse;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.MediaUploadResponse;
+import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.OrganizerEmailHistoryResponse;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.SendEventEmailResponse;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.TicketCheckinResponse;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.TicketSalesReportResponse;
@@ -251,6 +253,7 @@ public class EventServiceImpl implements EventService {
         EventRegistrationResponse response = new EventRegistrationResponse();
         response.setOrderId(order.getOrderId());
         response.setUserId(order.getUser() != null ? order.getUser().getUserId() : null);
+        response.setEventId(order.getEvent() != null ? order.getEvent().getEventId() : null);
         response.setFullName(order.getUser() != null ? order.getUser().getFullName() : null);
         response.setEmail(order.getUser() != null ? order.getUser().getEmail() : null);
         response.setPhone(order.getUser() != null ? order.getUser().getPhone() : null);
@@ -262,7 +265,36 @@ public class EventServiceImpl implements EventService {
         response.setPaymentStatus(order.getPaymentStatus() != null ? order.getPaymentStatus().name() : null);
         response.setOrderStatus(order.getOrderStatus() != null ? order.getOrderStatus().name() : null);
         response.setRegisteredAt(order.getCreatedAt());
+        response.setTickets(mapRegistrationTickets(order.getOrderItems()));
         return response;
+    }
+
+    private List<EventRegistrationTicketResponse> mapRegistrationTickets(List<OrderItem> orderItems) {
+        List<EventRegistrationTicketResponse> tickets = new ArrayList<>();
+        if (orderItems == null || orderItems.isEmpty()) {
+            return tickets;
+        }
+
+        for (OrderItem orderItem : orderItems) {
+            if (orderItem == null || orderItem.getTickets() == null || orderItem.getTickets().isEmpty()) {
+                continue;
+            }
+            for (Ticket ticket : orderItem.getTickets()) {
+                EventRegistrationTicketResponse ticketResponse = new EventRegistrationTicketResponse();
+                ticketResponse.setTicketId(ticket.getTicketId());
+                ticketResponse.setOrderItemId(orderItem.getOrderItemId());
+                ticketResponse.setTicketTypeId(ticket.getTicketType() != null ? ticket.getTicketType().getTicketTypeId() : null);
+                ticketResponse.setTicketTypeName(ticket.getTicketType() != null ? ticket.getTicketType().getTicketName() : null);
+                ticketResponse.setTicketCode(ticket.getTicketCode());
+                ticketResponse.setAttendeeName(ticket.getAttendeeName());
+                ticketResponse.setAttendeeEmail(ticket.getAttendeeEmail());
+                ticketResponse.setStatus(ticket.getStatus() != null ? ticket.getStatus().name() : null);
+                ticketResponse.setIssuedAt(ticket.getIssuedAt());
+                ticketResponse.setCheckedInAt(ticket.getCheckedInAt());
+                tickets.add(ticketResponse);
+            }
+        }
+        return tickets;
     }
 
     private Integer sumTotalTickets(List<OrderItem> orderItems) {
@@ -273,6 +305,38 @@ public class EventServiceImpl implements EventService {
                 .map(OrderItem::getQuantity)
                 .filter(Objects::nonNull)
                 .reduce(0, Integer::sum);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<OrganizerEmailHistoryResponse> getOrganizerEmailHistory(Long organizerId, Long eventId) {
+        organizerProfileRepository.findById(organizerId)
+                .orElseThrow(() -> new NoSuchElementException("Organizer with id " + organizerId + " not found"));
+
+        List<EmailCampaign> campaigns;
+        if (eventId != null) {
+            Event event = getOrganizerEvent(organizerId, eventId);
+            campaigns = emailCampaignRepository.findByEvent_EventIdOrderByCreatedAtDesc(event.getEventId());
+        } else {
+            campaigns = emailCampaignRepository.findByEvent_Organizer_OrganizerIdOrderByCreatedAtDesc(organizerId);
+        }
+
+        return campaigns.stream()
+                .map(this::mapToOrganizerEmailHistoryResponse)
+                .toList();
+    }
+
+    private OrganizerEmailHistoryResponse mapToOrganizerEmailHistoryResponse(EmailCampaign campaign) {
+        OrganizerEmailHistoryResponse response = new OrganizerEmailHistoryResponse();
+        response.setCampaignId(campaign.getCampaignId());
+        response.setEventId(campaign.getEvent() != null ? campaign.getEvent().getEventId() : null);
+        response.setEventTitle(campaign.getEvent() != null ? campaign.getEvent().getTitle() : null);
+        response.setSubject(campaign.getSubject());
+        response.setContent(campaign.getContent());
+        response.setSendStatus(campaign.getSendStatus() != null ? campaign.getSendStatus().name() : null);
+        response.setSentAt(campaign.getSentAt());
+        response.setCreatedAt(campaign.getCreatedAt());
+        return response;
     }
 
     @Override

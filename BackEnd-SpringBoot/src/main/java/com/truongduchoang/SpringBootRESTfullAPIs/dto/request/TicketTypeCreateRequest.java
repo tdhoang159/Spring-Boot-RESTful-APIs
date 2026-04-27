@@ -36,7 +36,7 @@ public class TicketTypeCreateRequest {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime saleEndTime;
 
-    private TicketTypeStatus status = TicketTypeStatus.ACTIVE;
+    private TicketTypeStatus status = TicketTypeStatus.INACTIVE;
 
     public Long getEventId() {
       return eventId;

@@ -4,6 +4,7 @@ import com.truongduchoang.SpringBootRESTfullAPIs.models.ApiResponse;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.request.EventCreateRequest;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.EventRegistrationResponse;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.EventResponse;
+import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.OrganizerEmailHistoryResponse;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.request.SendEventEmailRequest;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.request.TicketCheckinRequest;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.SendEventEmailResponse;
@@ -25,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/organizers")
+@RequestMapping("/api/organizers")
 public class OrganizerController {
 
     private final EventService eventService;
@@ -77,7 +78,21 @@ public class OrganizerController {
         return ResponseEntity.ok(response);
     }
 
-    // POST /organizers/{organizerId}/events + body EventCreateRequest { categoryId, title, slug, shortDescription, description, venueName, venueAddress, city, locationType, meetingUrl, startTime, endTime, registrationDeadline}
+    // GET /organizers/{organizerId}/email-history?eventId=1
+    @GetMapping("/{organizerId}/email-history")
+    public ResponseEntity<ApiResponse<List<OrganizerEmailHistoryResponse>>> getOrganizerEmailHistory(
+            @PathVariable Long organizerId,
+            @RequestParam(required = false) Long eventId) {
+        List<OrganizerEmailHistoryResponse> history = eventService.getOrganizerEmailHistory(organizerId, eventId);
+        ApiResponse<List<OrganizerEmailHistoryResponse>> response = new ApiResponse<>(
+            HttpStatus.OK,
+            "Get organizer email history successful",
+            history,
+            null);
+        return ResponseEntity.ok(response);
+    }
+
+    // POST /organizers/{organizerId}/events + body EventCreateRequest { categoryId, title, slug, shortDescription, description, venueName, venueAddress, city, locationType, meetingUrl, startTime, endTime, registrationDeadline, ticketTypes: [ { ticketName, description, price, quantityTotal, maxPerOrder, saleStartTime, saleEndTime, status } ] }
     @PostMapping("/{organizerId}/events")
     public ResponseEntity<ApiResponse<EventResponse>> createEvent(
             @PathVariable Long organizerId,

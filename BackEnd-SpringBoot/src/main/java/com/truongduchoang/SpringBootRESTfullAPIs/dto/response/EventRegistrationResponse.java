@@ -2,11 +2,13 @@ package com.truongduchoang.SpringBootRESTfullAPIs.dto.response;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class EventRegistrationResponse {
 
     private Long orderId;
     private Long userId;
+    private Long eventId;
     private String fullName;
     private String email;
     private String phone;
@@ -18,6 +20,7 @@ public class EventRegistrationResponse {
     private String paymentStatus;
     private String orderStatus;
     private LocalDateTime registeredAt;
+    private List<EventRegistrationTicketResponse> tickets;
 
     public Long getOrderId() {
         return orderId;
@@ -33,6 +36,14 @@ public class EventRegistrationResponse {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public Long getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(Long eventId) {
+        this.eventId = eventId;
     }
 
     public String getFullName() {
@@ -121,5 +132,13 @@ public class EventRegistrationResponse {
 
     public void setRegisteredAt(LocalDateTime registeredAt) {
         this.registeredAt = registeredAt;
+    }
+
+    public List<EventRegistrationTicketResponse> getTickets() {
+        return tickets;
+    }
+
+    public void setTickets(List<EventRegistrationTicketResponse> tickets) {
+        this.tickets = tickets;
     }
 }
