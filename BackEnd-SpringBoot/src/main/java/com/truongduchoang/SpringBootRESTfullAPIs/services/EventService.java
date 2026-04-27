@@ -10,6 +10,7 @@ import com.truongduchoang.SpringBootRESTfullAPIs.dto.request.SendEventEmailReque
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.request.TicketCheckinRequest;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.EventRegistrationResponse;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.EventResponse;
+import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.OrganizerEmailHistoryResponse;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.SendEventEmailResponse;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.TicketCheckinResponse;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.TicketSalesReportResponse;
@@ -28,6 +29,8 @@ public interface EventService {
     List<EventResponse> getOrganizerEvents(Long organizerId, String published);
 
     List<EventRegistrationResponse> getEventRegistrations(Long organizerId, Long eventId);
+
+    List<OrganizerEmailHistoryResponse> getOrganizerEmailHistory(Long organizerId, Long eventId);
 
     SendEventEmailResponse sendEventEmail(Long organizerId, Long eventId, SendEventEmailRequest request);
 
