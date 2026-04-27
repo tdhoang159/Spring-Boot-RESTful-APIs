@@ -16,16 +16,12 @@ public class OrderValidator {
     // ----------------------------------------------------------------
     public void validateTicketType(TicketType ticketType, int quantity, Long eventId) {
 
-        // Kiểm tra ticket type thuộc đúng event
-        System.out.println(eventId);
-        System.out.println(ticketType.getEvent().getEventId());
         if (!ticketType.getEvent().getEventId().equals(eventId)) {
             throw new BadRequestException(
                     "TicketType không thuộc event này",
                     "TICKET_TYPE_MISMATCH");
         }
 
-        // Kiểm tra trạng thái
         if (ticketType.getStatus() != TicketTypeStatus.ON_SALE) {
             throw new BadRequestException(
                     "Loại vé \"" + ticketType.getTicketName() + "\" hiện không mở bán",

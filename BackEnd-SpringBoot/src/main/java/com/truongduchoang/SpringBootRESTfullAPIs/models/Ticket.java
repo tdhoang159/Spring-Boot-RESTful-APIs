@@ -53,7 +53,7 @@ public class Ticket {
     @Column(name = "ticket_code", nullable = false, length = 100)
     private String ticketCode;
 
-    @Column(name = "qr_code", length = 255)
+    @Column(name = "qr_code", columnDefinition = "TEXT")
     private String qrCode;
 
     @Column(name = "attendee_name", nullable = false, length = 150)

@@ -60,7 +60,7 @@ public class TicketType {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20, columnDefinition = "VARCHAR(20)")
-    private TicketTypeStatus status = TicketTypeStatus.ACTIVE;
+    private TicketTypeStatus status = TicketTypeStatus.INACTIVE;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -85,7 +85,7 @@ public class TicketType {
             quantitySold = 0;
         }
         if (status == null) {
-            status = TicketTypeStatus.ACTIVE;
+            status = TicketTypeStatus.INACTIVE;
         }
     }
 

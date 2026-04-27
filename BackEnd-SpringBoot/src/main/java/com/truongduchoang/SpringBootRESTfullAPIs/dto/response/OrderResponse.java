@@ -19,7 +19,7 @@ public class OrderResponse {
     private BigDecimal discountAmount;
     private BigDecimal finalAmount;
 
-    // URL redirect sang VNPay — null nếu order đã COMPLETED hoặc CANCELLED
+    // SePay QR được lấy ở endpoint riêng, field này giữ lại để tương thích client cũ
     private String paymentUrl;
 
     private LocalDateTime createdAt;

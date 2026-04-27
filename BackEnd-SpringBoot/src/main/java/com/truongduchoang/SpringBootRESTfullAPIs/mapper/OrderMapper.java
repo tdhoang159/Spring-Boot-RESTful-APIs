@@ -63,11 +63,6 @@ public class OrderMapper {
         return order;
     }
 
-    // ----------------------------------------------------------------
-    // Order → OrderResponse
-    // paymentUrl truyền vào ngoài vì được tạo bởi VNPayService,
-    // không có trong Entity
-    // ----------------------------------------------------------------
     public OrderResponse toResponse(Order order, String paymentUrl) {
         OrderResponse res = new OrderResponse();
         res.setOrderId(order.getOrderId());

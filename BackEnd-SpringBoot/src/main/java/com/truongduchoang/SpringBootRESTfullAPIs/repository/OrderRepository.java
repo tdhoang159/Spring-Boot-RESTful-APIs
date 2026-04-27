@@ -13,11 +13,15 @@ import com.truongduchoang.SpringBootRESTfullAPIs.models.Order;
 public interface OrderRepository extends JpaRepository<Order, Long> {
     Optional<Order> findByOrderCode(String orderCode);
 
+    Optional<Order> findByOrderCodeAndUserUserId(String orderCode, Long userId);
+
+    Optional<Order> findByOrderIdAndUserUserId(Long orderId, Long userId);
+
     boolean existsByOrderCode(String orderCode);
 
     boolean existsByEventEventId(Long eventId);
 
     List<Order> findByUserUserId(Long userId);
 
-    //boolean updatePaymentInfo(Order order, String method, String paymentProofUrl);
+
 }

@@ -68,7 +68,7 @@ public class TicketTypeResponse {
             LocalDateTime saleEndTime,
             int available) {
 
-        if (status != TicketTypeStatus.ACTIVE) return false;
+        if (status != TicketTypeStatus.ON_SALE) return false;
         if (available <= 0) return false;
         LocalDateTime now = LocalDateTime.now();
         if (saleStartTime != null && now.isBefore(saleStartTime)) return false;
