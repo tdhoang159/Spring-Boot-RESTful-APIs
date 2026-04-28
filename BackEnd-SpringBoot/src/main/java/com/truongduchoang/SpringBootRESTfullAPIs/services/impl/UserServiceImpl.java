@@ -6,11 +6,15 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.truongduchoang.SpringBootRESTfullAPIs.dto.request.ChangePasswordRequest;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.request.UserCreateRequest;
+import com.truongduchoang.SpringBootRESTfullAPIs.dto.request.UserProfileUpdateRequest;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.request.UserUpdateRequest;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.MediaUploadResponse;
+import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.UserProfileResponse;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.UserResponse;
 import com.truongduchoang.SpringBootRESTfullAPIs.errors.BadRequestException;
 import com.truongduchoang.SpringBootRESTfullAPIs.errors.DuplicateResourceException;
@@ -20,6 +24,7 @@ import com.truongduchoang.SpringBootRESTfullAPIs.models.Role;
 import com.truongduchoang.SpringBootRESTfullAPIs.models.User;
 import com.truongduchoang.SpringBootRESTfullAPIs.repository.RoleRepository;
 import com.truongduchoang.SpringBootRESTfullAPIs.repository.UserRepository;
+import com.truongduchoang.SpringBootRESTfullAPIs.security.SecurityUtils;
 import com.truongduchoang.SpringBootRESTfullAPIs.services.CloudinaryService;
 import com.truongduchoang.SpringBootRESTfullAPIs.services.UserService;
 
@@ -29,16 +34,19 @@ public class UserServiceImpl implements UserService{
     private final RoleRepository roleRepository;
     private final UserMapper userMapper;
     private final CloudinaryService cloudinaryService;
+    private final PasswordEncoder passwordEncoder;
 
     public UserServiceImpl(
             UserRepository userRepository,
             RoleRepository roleRepository,
             UserMapper userMapper,
-            CloudinaryService cloudinaryService) {
+            CloudinaryService cloudinaryService,
+            PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.userMapper = userMapper;
         this.cloudinaryService = cloudinaryService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -98,6 +106,59 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    public UserProfileResponse getCurrentUserProfile() {
+        User user = findUserById(SecurityUtils.getCurrentUserId());
+        return toProfileResponse(user);
+    }
+
+    @Override
+    public UserProfileResponse updateCurrentUserProfile(UserProfileUpdateRequest request, MultipartFile avatar) {
+        User user = findUserById(SecurityUtils.getCurrentUserId());
+
+        if (request.getFullName() != null && !StringUtils.hasText(request.getFullName())) {
+            throw new BadRequestException("Full name cannot be blank", "FULL_NAME_BLANK");
+        }
+
+        if (StringUtils.hasText(request.getFullName())) {
+            user.setFullName(request.getFullName());
+        }
+        if (request.getPhone() != null) {
+            user.setPhone(request.getPhone());
+        }
+
+        if (hasFile(avatar)) {
+            MediaUploadResponse uploadResponse = cloudinaryService.uploadImage(avatar, "event-management/users");
+            user.setAvatarUrl(uploadResponse.getSecureUrl());
+        }
+
+        return toProfileResponse(userRepository.save(user));
+    }
+
+    @Override
+    public void changeCurrentUserPassword(ChangePasswordRequest request) {
+        User user = findUserById(SecurityUtils.getCurrentUserId());
+
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new BadRequestException("Xác nhận mật khẩu mới không khớp", "PASSWORD_CONFIRM_MISMATCH");
+        }
+
+        if (user.getPasswordHash() == null || user.getPasswordHash().isBlank()) {
+            throw new BadRequestException("Tài khoản chưa có mật khẩu hợp lệ", "INVALID_CURRENT_PASSWORD");
+        }
+
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPasswordHash())) {
+            throw new BadRequestException("Mật khẩu hiện tại không đúng", "INVALID_CURRENT_PASSWORD");
+        }
+
+        if (passwordEncoder.matches(request.getNewPassword(), user.getPasswordHash())) {
+            throw new BadRequestException("Mật khẩu mới phải khác mật khẩu hiện tại", "PASSWORD_NOT_CHANGED");
+        }
+
+        user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+    }
+
+    @Override
     public User createUser(User user) {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new IllegalArgumentException("Email already exists");
@@ -149,5 +210,14 @@ public class UserServiceImpl implements UserService{
 
     private boolean hasFile(MultipartFile file) {
         return file != null && !file.isEmpty();
+    }
+
+    private UserProfileResponse toProfileResponse(User user) {
+        UserProfileResponse response = new UserProfileResponse();
+        response.setEmail(user.getEmail());
+        response.setAvatarUrl(user.getAvatarUrl());
+        response.setFullName(user.getFullName());
+        response.setPhone(user.getPhone());
+        return response;
     }
 }

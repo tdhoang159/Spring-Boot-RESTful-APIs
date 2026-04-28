@@ -108,3 +108,77 @@ export type EventRegistrationsResponse = {
     errorCode: string | null;
     timeStamp: string;
 };
+
+export type OrganizerEmailHistoryItem = {
+    campaignId: number;
+    eventId: number;
+    eventTitle: string;
+    subject: string;
+    content: string;
+    sendStatus: string;
+    sentAt: string | null;
+    createdAt: string;
+};
+
+export type SpringPage<T> = {
+    content: T[];
+    totalElements: number;
+    totalPages: number;
+    size: number;
+    number: number;
+};
+
+export type OrganizerEmailHistoryResponse = {
+    status: string;
+    message: string;
+    data: SpringPage<OrganizerEmailHistoryItem>;
+    errorCode: string | null;
+    timeStamp: string;
+};
+
+export type EventTicketSalesSummary = {
+    eventId: number;
+    eventTitle: string;
+    paidOrders: number;
+    ticketsSold: number;
+    revenue: number;
+};
+
+export type TicketSalesReportData = {
+    organizerId: number;
+    month: number | null;
+    year: number | null;
+    totalOrders: number;
+    paidOrders: number;
+    ticketsSold: number;
+    revenue: number;
+    eventSummaries: EventTicketSalesSummary[];
+};
+
+export type TicketSalesReportResponse = {
+    status: string;
+    message: string;
+    data: TicketSalesReportData;
+    errorCode: string | null;
+};
+
+export type TicketCheckinInfo = {
+    ticketCode: string;
+    status: string;
+    attendeeName: string;
+    attendeeEmail: string;
+    eventId: number;
+    eventTitle: string;
+    ticketTypeId: number;
+    ticketTypeName: string;
+    issuedAt: string;
+    checkedIn: boolean;
+    checkedInAt: string | null;
+};
+
+export type CheckinApiResponse = {
+    status: string;
+    message: string;
+    data: TicketCheckinInfo;
+    errorCode: string | null;
+};

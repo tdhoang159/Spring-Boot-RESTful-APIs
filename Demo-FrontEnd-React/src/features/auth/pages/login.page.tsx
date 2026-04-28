@@ -11,8 +11,8 @@ const LoginPage = () => {
 
   const canSubmit = useMemo(() => email.trim().length > 0 && password.trim().length > 0, [email, password]);
 
-  const handleSubmit = () => {
-    const result = login({ email, password });
+  const handleSubmit = async () => {
+    const result = await login({ email, password });
     if (!result.ok) {
       setError(result.message);
       return;
@@ -24,7 +24,7 @@ const LoginPage = () => {
       return;
     }
 
-    navigate("/portal");
+    navigate("/");
   };
 
   return (
@@ -48,7 +48,7 @@ const LoginPage = () => {
               Đăng nhập
             </Button>
             <Typography color="text.secondary">
-              Chưa có tài khoản? <RouterLink to="/portal/register">Tạo tài khoản</RouterLink>
+              Chưa có tài khoản? <RouterLink to="/register">Tạo tài khoản</RouterLink>
             </Typography>
           </Stack>
         </CardContent>

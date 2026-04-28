@@ -5,8 +5,11 @@ import java.util.Optional;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.truongduchoang.SpringBootRESTfullAPIs.dto.request.ChangePasswordRequest;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.request.UserCreateRequest;
+import com.truongduchoang.SpringBootRESTfullAPIs.dto.request.UserProfileUpdateRequest;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.request.UserUpdateRequest;
+import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.UserProfileResponse;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.UserResponse;
 import com.truongduchoang.SpringBootRESTfullAPIs.models.User;
 
@@ -18,6 +21,12 @@ public interface UserService {
     UserResponse getUserResponseById(Long id);
 
     UserResponse updateUser(Long id, UserUpdateRequest request, MultipartFile avatar);
+
+    UserProfileResponse getCurrentUserProfile();
+
+    UserProfileResponse updateCurrentUserProfile(UserProfileUpdateRequest request, MultipartFile avatar);
+
+    void changeCurrentUserPassword(ChangePasswordRequest request);
 
     User createUser(User user);
 

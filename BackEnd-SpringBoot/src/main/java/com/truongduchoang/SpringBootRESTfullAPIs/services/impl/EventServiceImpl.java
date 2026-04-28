@@ -20,8 +20,8 @@ import com.truongduchoang.SpringBootRESTfullAPIs.models.enums.ApprovalStatus;
 import com.truongduchoang.SpringBootRESTfullAPIs.repository.CategoryRepository;
 import com.truongduchoang.SpringBootRESTfullAPIs.repository.CheckinRepository;
 import com.truongduchoang.SpringBootRESTfullAPIs.repository.EmailCampaignRepository;
-import com.truongduchoang.SpringBootRESTfullAPIs.repository.EventApprovalRepository;
 import com.truongduchoang.SpringBootRESTfullAPIs.repository.EventRepository;
+import com.truongduchoang.SpringBootRESTfullAPIs.repository.OrderItemRepository;
 import com.truongduchoang.SpringBootRESTfullAPIs.repository.OrderRepository;
 import com.truongduchoang.SpringBootRESTfullAPIs.repository.OrganizerProfileRepository;
 import com.truongduchoang.SpringBootRESTfullAPIs.repository.TicketRepository;
@@ -77,10 +77,10 @@ import com.truongduchoang.SpringBootRESTfullAPIs.services.EventService;
 @Service
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
-    private final EventApprovalRepository eventApprovalRepository;
     private final CategoryRepository categoryRepository;
     private final OrganizerProfileRepository organizerProfileRepository;
     private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
     private final TicketRepository ticketRepository;
     private final TicketTypeRepository ticketTypeRepository;
     private final CheckinRepository checkinRepository;
@@ -91,10 +91,11 @@ public class EventServiceImpl implements EventService {
     private final EmailCampaignRepository emailCampaignRepository;
 
     public EventServiceImpl(
-            EventRepository eventRepository, EventApprovalRepository eventApprovalRepository,
+            EventRepository eventRepository,
             CategoryRepository categoryRepository,
             OrganizerProfileRepository organizerProfileRepository,
             OrderRepository orderRepository,
+            OrderItemRepository orderItemRepository,
             TicketRepository ticketRepository,
             TicketTypeRepository ticketTypeRepository,
             CheckinRepository checkinRepository,
@@ -104,10 +105,10 @@ public class EventServiceImpl implements EventService {
             EmailSenderService emailSenderService,
             EmailCampaignRepository emailCampaignRepository) {
         this.eventRepository = eventRepository;
-        this.eventApprovalRepository = eventApprovalRepository;
         this.categoryRepository = categoryRepository;
         this.organizerProfileRepository = organizerProfileRepository;
         this.orderRepository = orderRepository;
+        this.orderItemRepository = orderItemRepository;
         this.ticketRepository = ticketRepository;
         this.ticketTypeRepository = ticketTypeRepository;
         this.checkinRepository = checkinRepository;
@@ -161,6 +162,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventResponse updateEvent(Long id, EventUpdateRequest request, MultipartFile banner) {
         Event event = findEventById(id);
 
@@ -189,6 +191,56 @@ public class EventServiceImpl implements EventService {
             event.setBannerUrl(uploadResponse.getSecureUrl());
         }
 
+        if (request.getTicketTypes() != null) {
+            Map<Long, TicketType> existingById = new HashMap<>();
+            if (event.getTicketTypes() != null) {
+                for (TicketType existing : event.getTicketTypes()) {
+                    if (existing.getTicketTypeId() != null) {
+                        existingById.put(existing.getTicketTypeId(), existing);
+                    }
+                }
+            }
+
+            Set<Long> incomingIds = new HashSet<>();
+            List<TicketType> upsertedTicketTypes = new ArrayList<>();
+
+            for (var ticketTypeRequest : request.getTicketTypes()) {
+                Long ticketTypeId = ticketTypeRequest.getTicketTypeId();
+                if (ticketTypeId != null) {
+                    TicketType existing = existingById.get(ticketTypeId);
+                    if (existing != null) {
+                        applyTicketTypeRequest(existing, ticketTypeRequest);
+                        upsertedTicketTypes.add(existing);
+                        incomingIds.add(ticketTypeId);
+                        continue;
+                    }
+                }
+
+                TicketType created = ticketTypeMapper.toEntity(ticketTypeRequest, event);
+                upsertedTicketTypes.add(created);
+            }
+
+            for (var entry : existingById.entrySet()) {
+                Long existingId = entry.getKey();
+                TicketType existing = entry.getValue();
+                if (incomingIds.contains(existingId)) {
+                    continue;
+                }
+
+                if (orderItemRepository.existsByTicketType_TicketTypeId(existingId)
+                        || ticketRepository.existsByTicketType_TicketTypeId(existingId)) {
+                    throw new BadRequestException(
+                            "Không thể xóa loại vé đã phát sinh đơn hàng hoặc vé",
+                            "TICKET_TYPE_HAS_TRANSACTIONS");
+                }
+
+                ticketTypeRepository.delete(existing);
+            }
+
+            List<TicketType> savedTicketTypes = ticketTypeRepository.saveAll(upsertedTicketTypes);
+            event.setTicketTypes(savedTicketTypes);
+        }
+
         return eventMapper.toResponse(eventRepository.save(event));
     }
 
@@ -203,15 +255,10 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Page<EventSummaryResponse> getApprovedEvents(EventSearchRequest req) {
-        //List<Long>approvedEventIds = eventApprovalRepository.findByApprovalStatus(ApprovalStatus.APPROVED);
-        List<Long> approvedEventIds = eventApprovalRepository.findEventIdsByApprovalStatus(ApprovalStatus.APPROVED);
-        if(approvedEventIds.isEmpty()) return Page.empty();
-
         Specification<Event> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-
-            predicates.add(root.get("eventId").in(approvedEventIds));
+            predicates.add(cb.equal(root.get("approvalStatus"), ApprovalStatus.APPROVED));
 
             if (req.getKeyword() != null && !req.getKeyword().isBlank()) {
                 String likePattern = "%" + req.getKeyword().trim().toLowerCase() + "%";
@@ -298,6 +345,19 @@ public class EventServiceImpl implements EventService {
 
     private boolean hasFile(MultipartFile file) {
         return file != null && !file.isEmpty();
+    }
+
+    private void applyTicketTypeRequest(TicketType target, com.truongduchoang.SpringBootRESTfullAPIs.dto.request.TicketTypeCreateRequest request) {
+        target.setTicketName(request.getTicketName());
+        target.setDescription(request.getDescription());
+        target.setPrice(request.getPrice());
+        target.setQuantityTotal(request.getQuantityTotal());
+        target.setMaxPerOrder(request.getMaxPerOrder());
+        target.setSaleStartTime(request.getSaleStartTime());
+        target.setSaleEndTime(request.getSaleEndTime());
+        if (request.getStatus() != null) {
+            target.setStatus(request.getStatus());
+        }
     }
 
 
@@ -395,21 +455,38 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<OrganizerEmailHistoryResponse> getOrganizerEmailHistory(Long organizerId, Long eventId) {
+        public Page<OrganizerEmailHistoryResponse> getOrganizerEmailHistory(
+            Long organizerId,
+            Long eventId,
+            EmailSendStatus sendStatus,
+            Pageable pageable) {
         organizerProfileRepository.findById(organizerId)
                 .orElseThrow(() -> new NoSuchElementException("Organizer with id " + organizerId + " not found"));
 
-        List<EmailCampaign> campaigns;
+        Pageable sortedPageable = PageRequest.of(
+            pageable.getPageNumber(),
+            pageable.getPageSize(),
+            Sort.by("createdAt").descending());
+
+        Page<EmailCampaign> campaigns;
         if (eventId != null) {
             Event event = getOrganizerEvent(organizerId, eventId);
-            campaigns = emailCampaignRepository.findByEvent_EventIdOrderByCreatedAtDesc(event.getEventId());
+            campaigns = sendStatus == null
+                ? emailCampaignRepository.findByEvent_EventIdOrderByCreatedAtDesc(event.getEventId(), sortedPageable)
+                : emailCampaignRepository.findByEvent_EventIdAndSendStatusOrderByCreatedAtDesc(
+                    event.getEventId(),
+                    sendStatus,
+                    sortedPageable);
         } else {
-            campaigns = emailCampaignRepository.findByEvent_Organizer_OrganizerIdOrderByCreatedAtDesc(organizerId);
+            campaigns = sendStatus == null
+                ? emailCampaignRepository.findByEvent_Organizer_OrganizerIdOrderByCreatedAtDesc(organizerId, sortedPageable)
+                : emailCampaignRepository.findByEvent_Organizer_OrganizerIdAndSendStatusOrderByCreatedAtDesc(
+                    organizerId,
+                    sendStatus,
+                    sortedPageable);
         }
 
-        return campaigns.stream()
-                .map(this::mapToOrganizerEmailHistoryResponse)
-                .toList();
+        return campaigns.map(this::mapToOrganizerEmailHistoryResponse);
     }
 
     private OrganizerEmailHistoryResponse mapToOrganizerEmailHistoryResponse(EmailCampaign campaign) {
@@ -604,6 +681,9 @@ public class EventServiceImpl implements EventService {
         checkin.setCheckinTime(checkinTime);
         if (StringUtils.hasText(request.getGateName())) {
             checkin.setGateName(request.getGateName().trim());
+        }
+        if (StringUtils.hasText(request.getNote())) {
+            checkin.setNote(request.getNote().trim());
         }
         checkinRepository.save(checkin);
 

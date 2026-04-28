@@ -1,4 +1,7 @@
-export type UserRole = "ATTENDEE" | "ORGANIZER";
+import { clearAuthSession, getAuthUser, setAuthSession } from "./auth-session.service";
+import { loginAPI } from "./auth.api";
+
+export type UserRole = "ATTENDEE" | "ORGANIZER" | "ADMIN";
 
 export type AppUser = {
   fullName: string;
@@ -23,7 +26,6 @@ type UserRecord = AppUser & {
 };
 
 const USERS_KEY = "demo_users";
-const CURRENT_USER_KEY = "demo_current_user";
 
 const loadUsers = (): UserRecord[] => {
   const raw = localStorage.getItem(USERS_KEY);
@@ -61,41 +63,42 @@ export const register = (input: RegisterInput): { ok: boolean; message: string }
   return { ok: true, message: "Register successful" };
 };
 
-export const login = (input: LoginInput): { ok: boolean; message: string } => {
-  const users = loadUsers();
-  const found = users.find(
-    (u) => u.email.toLowerCase() === input.email.toLowerCase() && u.password === input.password,
-  );
-
-  if (!found) {
-    return { ok: false, message: "Invalid email or password" };
+export const login = async (input: LoginInput): Promise<{ ok: boolean; message: string }> => {
+  try {
+    const session = await loginAPI(input);
+    setAuthSession(session);
+    return { ok: true, message: "Login successful" };
+  } catch (error: any) {
+    return {
+      ok: false,
+      message: error?.response?.data?.message ?? "Invalid email or password",
+    };
   }
-
-  const currentUser: AppUser = {
-    fullName: found.fullName,
-    email: found.email,
-    role: found.role,
-  };
-
-  localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
-  return { ok: true, message: "Login successful" };
 };
 
 export const getCurrentUser = (): AppUser | null => {
-  const raw = localStorage.getItem(CURRENT_USER_KEY);
-  if (!raw) return null;
+  const user = getAuthUser();
+  if (!user) return null;
 
-  try {
-    return JSON.parse(raw) as AppUser;
-  } catch {
-    return null;
-  }
+  return {
+    fullName: user.fullName,
+    email: user.email,
+    role: user.role as UserRole,
+  };
 };
 
 export const logout = () => {
-  localStorage.removeItem(CURRENT_USER_KEY);
+  clearAuthSession();
 };
 
 export const getHomePathByRole = (role: UserRole): string => {
-  return role === "ORGANIZER" ? "/portal/organizer" : "/portal/attendee";
+  if (role === "ORGANIZER") {
+    return "/organizer";
+  }
+
+  if (role === "ATTENDEE") {
+    return "/attendee";
+  }
+
+  return "/";
 };

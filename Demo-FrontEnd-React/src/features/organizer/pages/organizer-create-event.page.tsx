@@ -1,6 +1,7 @@
 import { Add, DeleteOutlined } from "@mui/icons-material";
 import {
     Alert,
+    Box,
     Button,
     Card,
     CardContent,
@@ -69,6 +70,8 @@ const OrganizerCreateEventPage = () => {
     const [startTime, setStartTime] = useState("");
     const [endTime, setEndTime] = useState("");
     const [registrationDeadline, setRegistrationDeadline] = useState("");
+    const [bannerFile, setBannerFile] = useState<File | null>(null);
+    const [bannerPreview, setBannerPreview] = useState<string | null>(null);
 
     const [ticketTypes, setTicketTypes] = useState<TicketTypeForm[]>([
         {
@@ -104,6 +107,20 @@ const OrganizerCreateEventPage = () => {
     useEffect(() => {
         setSlug(slugify(title));
     }, [title]);
+
+    useEffect(() => {
+        if (!bannerFile) {
+            setBannerPreview(null);
+            return;
+        }
+
+        const objectUrl = URL.createObjectURL(bannerFile);
+        setBannerPreview(objectUrl);
+
+        return () => {
+            URL.revokeObjectURL(objectUrl);
+        };
+    }, [bannerFile]);
 
     const canSave = useMemo(() => {
         if (!categoryId || !title || !slug || !shortDescription || !description) return false;
@@ -164,6 +181,7 @@ const OrganizerCreateEventPage = () => {
             startTime: normalizeDateTime(startTime),
             endTime: normalizeDateTime(endTime),
             registrationDeadline: registrationDeadline ? normalizeDateTime(registrationDeadline) : null,
+            banner: bannerFile,
             ticketTypes: ticketTypes.map((ticket) => ({
                 ticketName: ticket.ticketName,
                 description: ticket.description,
@@ -249,6 +267,41 @@ const OrganizerCreateEventPage = () => {
                                 value={meetingUrl}
                                 onChange={(e) => setMeetingUrl(e.target.value)}
                             />
+                        </Grid>
+                        <Grid size={{ xs: 12 }}>
+                            <Stack spacing={1}>
+                                <Button variant="outlined" component="label" disabled={isSaving}>
+                                    Upload banner
+                                    <input
+                                        hidden
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => setBannerFile(e.target.files?.[0] ?? null)}
+                                    />
+                                </Button>
+                                {bannerFile ? (
+                                    <Stack spacing={1}>
+                                        <Typography variant="body2" color="text.secondary">
+                                            File banner: {bannerFile.name}
+                                        </Typography>
+                                        {bannerPreview ? (
+                                            <Box
+                                                component="img"
+                                                src={bannerPreview}
+                                                alt="Banner preview"
+                                                sx={{
+                                                    width: "100%",
+                                                    maxWidth: 420,
+                                                    height: 200,
+                                                    objectFit: "cover",
+                                                    borderRadius: 2,
+                                                    border: "1px solid rgba(11, 53, 88, 0.15)",
+                                                }}
+                                            />
+                                        ) : null}
+                                    </Stack>
+                                ) : null}
+                            </Stack>
                         </Grid>
                         <Grid size={{ xs: 12 }}>
                             <TextField

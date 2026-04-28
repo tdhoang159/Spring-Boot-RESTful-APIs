@@ -8,7 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Link as RouterLink, Outlet, useLocation, useNavigate } from "react-router";
-import { getCurrentUser, getHomePathByRole, logout } from "../../features/auth/services/auth.service";
+import { getCurrentUser, logout } from "../../features/auth/services/auth.service";
 
 const AppLayout = () => {
   const navigate = useNavigate();
@@ -16,26 +16,28 @@ const AppLayout = () => {
   const user = getCurrentUser();
 
   const organizerItems = [
-    { label: "Home Page", to: "/portal/organizer" },
-    { label: "Tạo sự kiện", to: "/portal/organizer/create-event" },
-    { label: "Sự kiện của tôi", to: "/portal/organizer/events" },
-    { label: "Xem người đăng ký", to: "/portal/organizer/registrations" },
-    { label: "Gửi email", to: "/portal/organizer/send-email" },
-    { label: "Lịch sử email", to: "/portal/organizer/email-history" },
-    { label: "Báo cáo", to: "/portal/organizer/sales-report" },
-    { label: "Profile", to: "/portal/profile" },
+    { label: "Trang chủ", to: "/organizer" },
+    { label: "Tạo sự kiện", to: "/organizer/create-event" },
+    { label: "Sự kiện của tôi", to: "/organizer/events" },
+    { label: "Xem người đăng ký", to: "/organizer/registrations" },
+    { label: "Quét vé", to: "/organizer/checkin" },
+    { label: "Gửi email", to: "/organizer/send-email" },
+    { label: "Lịch sử email", to: "/organizer/email-history" },
+    { label: "Báo cáo", to: "/organizer/sales-report" },
   ];
 
   const attendeeItems = [
-    { label: "Home", to: "/portal/attendee" },
-    { label: "Profile", to: "/portal/profile" },
+    { label: "Trang chủ", to: "/attendee" },
+    { label: "Sự kiện", to: "/attendee/events" },
+    { label: "Đơn hàng của tôi", to: "/attendee/orders" },
+    { label: "Vé của tôi", to: "/attendee/tickets" },
   ];
 
   const items = user?.role === "ORGANIZER" ? organizerItems : attendeeItems;
 
   const handleLogout = () => {
     logout();
-    navigate("/portal/login");
+    navigate("/login");
   };
 
   return (
@@ -66,9 +68,9 @@ const AppLayout = () => {
             <Button
               variant="outlined"
               color="inherit"
-              onClick={() => navigate(user ? getHomePathByRole(user.role) : "/")}
+              onClick={() => navigate("/profile")}
             >
-              Dashboard
+              Profile
             </Button>
             <Button variant="outlined" color="inherit" onClick={handleLogout}>
               Logout

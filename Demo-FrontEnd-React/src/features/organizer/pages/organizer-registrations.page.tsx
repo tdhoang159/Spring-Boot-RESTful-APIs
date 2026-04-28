@@ -92,7 +92,7 @@ const OrganizerRegistrationsPage = () => {
         allEvents.map((ev) => fetchEventRegistrations(organizerId, ev.eventId))
       )
         .then((results) => setRegistrations(results.flat()))
-        .catch((err: unknown) => setRegsError(err instanceof Error ? err.message : "Loi tai danh sach"))
+        .catch((err: unknown) => setRegsError(err instanceof Error ? err.message : "Lỗi tải danh sách"))
         .finally(() => setIsLoadingRegs(false));
       return;
     }
@@ -100,7 +100,7 @@ const OrganizerRegistrationsPage = () => {
     setRegsError(null);
     fetchEventRegistrations(organizerId, Number(selectedEventId))
       .then(setRegistrations)
-      .catch((err: unknown) => setRegsError(err instanceof Error ? err.message : "Loi tai danh sach"))
+      .catch((err: unknown) => setRegsError(err instanceof Error ? err.message : "Lỗi tải danh sách"))
       .finally(() => setIsLoadingRegs(false));
   }, [organizerId, selectedEventId, events]);
 
@@ -125,10 +125,10 @@ const OrganizerRegistrationsPage = () => {
     <Stack spacing={2}>
       <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center" }}>
         <Typography variant="h4" sx={{ fontWeight: 700 }}>
-          Danh Sach Nguoi Dang Ky
+          Danh Sách Người Đăng Ký
         </Typography>
         <Button variant="outlined" onClick={() => void refreshEvents()}>
-          Tai lai su kien
+          Tải lại sự kiện
         </Button>
       </Stack>
 
@@ -138,7 +138,7 @@ const OrganizerRegistrationsPage = () => {
       <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ flexWrap: "wrap", alignItems: { sm: "center" } }}>
         <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
           <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: "nowrap" }}>
-            Su kien:
+            Sự kiện:
           </Typography>
           <Select
             size="small"
@@ -146,7 +146,7 @@ const OrganizerRegistrationsPage = () => {
             onChange={handleEventChange}
             sx={{ minWidth: 240 }}
           >
-            <MenuItem value="ALL">Tat ca su kien</MenuItem>
+            <MenuItem value="ALL">Tất cả sự kiện</MenuItem>
             {events.map((event) => (
               <MenuItem key={event.eventId} value={String(event.eventId)}>
                 {event.title}
@@ -157,7 +157,7 @@ const OrganizerRegistrationsPage = () => {
 
         <TextField
           size="small"
-          placeholder="Tim theo ten, email nguoi mua..."
+          placeholder="Tìm theo tên, email người mua..."
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
           sx={{ minWidth: 240 }}
@@ -174,7 +174,7 @@ const OrganizerRegistrationsPage = () => {
 
         <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
           <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: "nowrap" }}>
-            Thanh toan:
+            Thanh toán:
           </Typography>
           <Select
             size="small"
@@ -184,7 +184,7 @@ const OrganizerRegistrationsPage = () => {
           >
             {PAYMENT_STATUS_OPTIONS.map((s) => (
               <MenuItem key={s} value={s}>
-                {s === "ALL" ? "Tat ca" : s}
+                {s === "ALL" ? "Tất cả" : s}
               </MenuItem>
             ))}
           </Select>
@@ -192,7 +192,7 @@ const OrganizerRegistrationsPage = () => {
 
         <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
           <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: "nowrap" }}>
-            Don hang:
+            Đơn hàng:
           </Typography>
           <Select
             size="small"
@@ -202,7 +202,7 @@ const OrganizerRegistrationsPage = () => {
           >
             {ORDER_STATUS_OPTIONS.map((s) => (
               <MenuItem key={s} value={s}>
-                {s === "ALL" ? "Tat ca" : s}
+                {s === "ALL" ? "Tất cả" : s}
               </MenuItem>
             ))}
           </Select>
@@ -214,7 +214,7 @@ const OrganizerRegistrationsPage = () => {
         <CardContent sx={{ p: 0, "&:last-child": { pb: 0 } }}>
           {isLoadingRegs ? (
             <Box sx={{ p: 3 }}>
-              <Typography color="text.secondary">Dang tai du lieu...</Typography>
+              <Typography color="text.secondary">Đang tải dữ liệu...</Typography>
             </Box>
           ) : regsError ? (
             <Box sx={{ p: 3 }}>
@@ -226,21 +226,21 @@ const OrganizerRegistrationsPage = () => {
                 <TableHead>
                   <TableRow sx={{ "& th": { fontWeight: 700, bgcolor: "rgba(11,53,88,0.04)" } }}>
                     <TableCell>#</TableCell>
-                    <TableCell>Ten nguoi mua</TableCell>
+                    <TableCell>Tên người mua</TableCell>
                     <TableCell>Email</TableCell>
-                    <TableCell>So dien thoai</TableCell>
-                    <TableCell align="center">So ve</TableCell>
-                    <TableCell align="right">Tong tien</TableCell>
-                    <TableCell align="center">Thanh toan</TableCell>
-                    <TableCell align="center">Don hang</TableCell>
-                    <TableCell>Thoi gian dang ky</TableCell>
+                    <TableCell>Số điện thoại</TableCell>
+                    <TableCell align="center">Số vé</TableCell>
+                    <TableCell align="right">Tổng tiền</TableCell>
+                    <TableCell align="center">Thanh toán</TableCell>
+                    <TableCell align="center">Đơn hàng</TableCell>
+                    <TableCell>Thời gian đăng ký</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {filtered.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={9} align="center" sx={{ py: 4, color: "text.secondary" }}>
-                        Khong co du lieu phu hop.
+                        Không có dữ liệu phù hợp.
                       </TableCell>
                     </TableRow>
                   ) : (
@@ -286,7 +286,7 @@ const OrganizerRegistrationsPage = () => {
 
       {!isLoadingRegs && !regsError ? (
         <Typography variant="body2" color="text.secondary">
-          Hien thi {filtered.length} / {registrations.length} don dang ky
+          Hiển thị {filtered.length} / {registrations.length} đơn đăng ký
         </Typography>
       ) : null}
 
@@ -300,17 +300,17 @@ const OrganizerRegistrationsPage = () => {
         <DialogTitle>
           <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center" }}>
             <Typography variant="h6" sx={{ fontWeight: 700 }}>
-              Danh sach ve — {ticketDialogReg?.buyerName}
+              Danh sách vé — {ticketDialogReg?.buyerName}
             </Typography>
             <Button variant="outlined" size="small" onClick={() => setTicketDialogReg(null)}>
-              Dong
+              Đóng
             </Button>
           </Stack>
         </DialogTitle>
         <DialogContent sx={{ p: 0, pb: 2 }}>
           {ticketDialogReg && ticketDialogReg.tickets.length === 0 ? (
             <Box sx={{ p: 3 }}>
-              <Typography color="text.secondary">Don hang nay chua co ve nao.</Typography>
+              <Typography color="text.secondary">Đơn hàng này chưa có vé nào.</Typography>
             </Box>
           ) : (
             <TableContainer>
@@ -318,12 +318,12 @@ const OrganizerRegistrationsPage = () => {
                 <TableHead>
                   <TableRow sx={{ "& th": { fontWeight: 700, bgcolor: "rgba(11,53,88,0.04)" } }}>
                     <TableCell>#</TableCell>
-                    <TableCell>Ma ve</TableCell>
-                    <TableCell>Loai ve</TableCell>
-                    <TableCell>Ten nguoi tham du</TableCell>
+                    <TableCell>Mã vé</TableCell>
+                    <TableCell>Loại vé</TableCell>
+                    <TableCell>Tên người tham dự</TableCell>
                     <TableCell>Email</TableCell>
-                    <TableCell align="center">Trang thai</TableCell>
-                    <TableCell>Thoi gian cap</TableCell>
+                    <TableCell align="center">Trạng thái</TableCell>
+                    <TableCell>Thời gian cấp</TableCell>
                     <TableCell>Check-in</TableCell>
                   </TableRow>
                 </TableHead>

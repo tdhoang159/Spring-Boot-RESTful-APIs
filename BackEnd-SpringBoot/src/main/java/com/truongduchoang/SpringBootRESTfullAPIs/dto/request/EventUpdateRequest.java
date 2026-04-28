@@ -1,6 +1,7 @@
 package com.truongduchoang.SpringBootRESTfullAPIs.dto.request;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -52,6 +53,8 @@ public class EventUpdateRequest {
     private PublishStatus publishStatus;
 
     private ApprovalStatus approvalStatus;
+
+    private List<TicketTypeCreateRequest> ticketTypes;
 
     public Long getOrganizerId() {
         return organizerId;
@@ -179,5 +182,13 @@ public class EventUpdateRequest {
 
     public void setApprovalStatus(ApprovalStatus approvalStatus) {
         this.approvalStatus = approvalStatus;
+    }
+
+    public List<TicketTypeCreateRequest> getTicketTypes() {
+        return ticketTypes;
+    }
+
+    public void setTicketTypes(List<TicketTypeCreateRequest> ticketTypes) {
+        this.ticketTypes = ticketTypes;
     }
 }

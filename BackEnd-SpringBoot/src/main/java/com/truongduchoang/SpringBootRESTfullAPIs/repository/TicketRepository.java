@@ -19,4 +19,6 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     boolean existsByTicketCode(String ticketCode);
 
     boolean existsByEventEventId(Long eventId);
+
+    boolean existsByTicketType_TicketTypeId(Long ticketTypeId);
 }

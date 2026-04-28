@@ -33,7 +33,7 @@ const RegisterPage = () => {
       return;
     }
 
-    navigate("/portal/login");
+    navigate("/login");
   };
 
   return (
@@ -63,7 +63,7 @@ const RegisterPage = () => {
               Đăng ký
             </Button>
             <Typography color="text.secondary">
-              Đã có tài khoản? <RouterLink to="/portal/login">Đăng nhập ngay</RouterLink>
+              Đã có tài khoản? <RouterLink to="/login">Đăng nhập ngay</RouterLink>
             </Typography>
           </Stack>
         </CardContent>

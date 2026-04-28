@@ -100,12 +100,11 @@ public class OrderMapper {
     // ----------------------------------------------------------------
     public OrderItemResponse toItemResponse(OrderItem item) {
         OrderItemResponse res = new OrderItemResponse();
-        if(item.getTicketType() == null) {
-            throw new IllegalArgumentException("Lỗi ở đây nè " + item.getOrderItemId());
-        }
         res.setOrderItemId(item.getOrderItemId());
-        res.setTicketTypeId(item.getTicketType().getTicketTypeId());
-        res.setTicketName(item.getTicketType().getTicketName());
+        if (item.getTicketType() != null) {
+            res.setTicketTypeId(item.getTicketType().getTicketTypeId());
+            res.setTicketName(item.getTicketType().getTicketName());
+        }
         res.setQuantity(item.getQuantity());
         res.setUnitPrice(item.getUnitPrice());
         res.setSubtotal(item.getSubtotal());

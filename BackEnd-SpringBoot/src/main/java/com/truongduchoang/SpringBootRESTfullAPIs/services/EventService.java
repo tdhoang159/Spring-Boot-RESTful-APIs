@@ -15,7 +15,9 @@ import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.OrganizerEmailHist
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.SendEventEmailResponse;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.TicketCheckinResponse;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.TicketSalesReportResponse;
+import com.truongduchoang.SpringBootRESTfullAPIs.models.enums.EmailSendStatus;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface EventService {
@@ -37,7 +39,11 @@ public interface EventService {
 
     List<EventRegistrationResponse> getEventRegistrations(Long organizerId, Long eventId);
 
-    List<OrganizerEmailHistoryResponse> getOrganizerEmailHistory(Long organizerId, Long eventId);
+        Page<OrganizerEmailHistoryResponse> getOrganizerEmailHistory(
+            Long organizerId,
+            Long eventId,
+            EmailSendStatus sendStatus,
+            Pageable pageable);
 
     SendEventEmailResponse sendEventEmail(Long organizerId, Long eventId, SendEventEmailRequest request);
 

@@ -10,6 +10,8 @@ public class TicketCheckinRequest {
 
     private String gateName;
 
+    private String note;
+
     public String getTicketCode() {
         return ticketCode;
     }
@@ -32,5 +34,13 @@ public class TicketCheckinRequest {
 
     public void setGateName(String gateName) {
         this.gateName = gateName;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 }

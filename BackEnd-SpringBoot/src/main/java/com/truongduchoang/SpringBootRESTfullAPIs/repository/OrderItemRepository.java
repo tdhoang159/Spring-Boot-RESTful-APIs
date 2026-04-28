@@ -7,4 +7,5 @@ import com.truongduchoang.SpringBootRESTfullAPIs.models.OrderItem;
 
 @Repository
 public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
+	boolean existsByTicketType_TicketTypeId(Long ticketTypeId);
 }

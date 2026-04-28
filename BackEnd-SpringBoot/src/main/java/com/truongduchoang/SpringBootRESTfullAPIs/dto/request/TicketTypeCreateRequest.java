@@ -11,6 +11,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public class TicketTypeCreateRequest {
+  private Long ticketTypeId;
+
     @NotNull(message = "Event không được bỏ trống")
     private Long eventId;
 
@@ -40,6 +42,14 @@ public class TicketTypeCreateRequest {
 
     public Long getEventId() {
       return eventId;
+    }
+
+    public Long getTicketTypeId() {
+      return ticketTypeId;
+    }
+
+    public void setTicketTypeId(Long ticketTypeId) {
+      this.ticketTypeId = ticketTypeId;
     }
 
     public void setEventId(Long eventId) {

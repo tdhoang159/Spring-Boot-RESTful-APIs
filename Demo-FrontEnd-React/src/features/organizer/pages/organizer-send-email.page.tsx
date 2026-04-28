@@ -1,4 +1,5 @@
 import {
+    Alert,
     Box,
     Button,
     Card,
@@ -17,6 +18,7 @@ import GroupIcon from "@mui/icons-material/Group";
 import PlaceIcon from "@mui/icons-material/Place";
 import { useState } from "react";
 import { useOrganizerEvents } from "../context/organizer-events.context";
+import { sendEventEmail } from "../services/organizer-events.api";
 
 const formatDateTime = (dt: string) =>
     new Date(dt).toLocaleString("vi-VN", {
@@ -28,45 +30,61 @@ const formatDateTime = (dt: string) =>
     });
 
 const OrganizerSendEmailPage = () => {
-    const { events, isLoading, error, refreshEvents } = useOrganizerEvents();
+    const { organizerId, events, isLoading, error, refreshEvents } = useOrganizerEvents();
     const [selectedEventId, setSelectedEventId] = useState<string>("");
     const [subject, setSubject] = useState("");
     const [content, setContent] = useState("");
+    const [isSending, setIsSending] = useState(false);
+    const [sendError, setSendError] = useState<string | null>(null);
+    const [sendSuccess, setSendSuccess] = useState<{ campaignId: number; recipientCount: number; message: string } | null>(null);
 
     const selectedEvent = events.find((e) => String(e.eventId) === selectedEventId) ?? null;
     const estimatedRecipients = selectedEvent
         ? selectedEvent.ticketTypes.reduce((sum, ticket) => sum + ticket.quantityTotal, 0)
         : 0;
 
-    const handleSend = () => {
-        if (!selectedEventId || !selectedEvent) {
-            alert("Vui long chon su kien truoc khi gui email.");
-            return;
+    const handleSend = async () => {
+        if (!selectedEventId || !selectedEvent) return;
+        try {
+            setIsSending(true);
+            setSendError(null);
+            setSendSuccess(null);
+            const result = await sendEventEmail(organizerId, Number(selectedEventId), { subject, content });
+            setSendSuccess(result);
+            setSubject("");
+            setContent("");
+        } catch (err) {
+            setSendError(err instanceof Error ? err.message : "Không thể gửi email.");
+        } finally {
+            setIsSending(false);
         }
-        const payload = { eventId: Number(selectedEventId), subject, content };
-        console.log("Send email payload:", payload);
-        alert(`Da tao payload gui email cho su kien: ${selectedEvent.title}`);
     };
 
     return (
         <Stack spacing={3}>
             <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center" }}>
                 <Typography variant="h4" sx={{ fontWeight: 700 }}>
-                    Gui Email Thong Bao
+                    Gửi Email Thông Báo
                 </Typography>
                 <Button variant="outlined" onClick={() => void refreshEvents()}>
-                    Tai lai su kien
+                    Tải lại sự kiện
                 </Button>
             </Stack>
 
             {error ? <Typography color="error">{error}</Typography> : null}
+            {sendError ? <Alert severity="error">{sendError}</Alert> : null}
+            {sendSuccess ? (
+                <Alert severity="success">
+                    Đã gửi thành công đến <strong>{sendSuccess.recipientCount}</strong> người nhận. (Campaign ID: {sendSuccess.campaignId})
+                </Alert>
+            ) : null}
 
             <Card elevation={0} sx={{ borderRadius: 4, border: "1px solid rgba(11, 53, 88, 0.12)" }}>
                 <CardContent>
                     <Stack spacing={3}>
                         <Stack spacing={1}>
                             <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                                Chon su kien *
+                                Chọn sự kiện *
                             </Typography>
                             <Select
                                 displayEmpty
@@ -76,7 +94,7 @@ const OrganizerSendEmailPage = () => {
                                 size="small"
                             >
                                 <MenuItem value="" disabled>
-                                    -- Chon su kien --
+                                    -- Chọn sự kiện --
                                 </MenuItem>
                                 {events.map((ev) => (
                                     <MenuItem key={ev.eventId} value={String(ev.eventId)}>
@@ -84,7 +102,7 @@ const OrganizerSendEmailPage = () => {
                                     </MenuItem>
                                 ))}
                             </Select>
-                            {isLoading ? <Typography color="text.secondary">Dang tai su kien...</Typography> : null}
+                            {isLoading ? <Typography color="text.secondary">Đang tải sự kiện...</Typography> : null}
                         </Stack>
 
                         {selectedEvent && (
@@ -102,7 +120,7 @@ const OrganizerSendEmailPage = () => {
                                             {selectedEvent.title}
                                         </Typography>
                                         <Chip
-                                            label={selectedEvent.publishStatus === "PUBLISHED" ? "Da phat hanh" : "Chua phat hanh"}
+                                            label={selectedEvent.publishStatus === "PUBLISHED" ? "Đã phát hành" : "Chưa phát hành"}
                                             color={selectedEvent.publishStatus === "PUBLISHED" ? "success" : "default"}
                                             size="small"
                                         />
@@ -118,13 +136,13 @@ const OrganizerSendEmailPage = () => {
                                         <Stack direction="row" spacing={0.5} sx={{ alignItems: "center" }}>
                                             <PlaceIcon sx={{ fontSize: 16, color: "text.secondary" }} />
                                             <Typography variant="body2" color="text.secondary">
-                                                {(selectedEvent.venueName ?? "Chua co dia diem")}, {selectedEvent.city ?? "N/A"}
+                                                {(selectedEvent.venueName ?? "Chưa có địa điểm")}, {selectedEvent.city ?? "N/A"}
                                             </Typography>
                                         </Stack>
                                         <Stack direction="row" spacing={0.5} sx={{ alignItems: "center" }}>
                                             <GroupIcon sx={{ fontSize: 16, color: "text.secondary" }} />
                                             <Typography variant="body2" color="text.secondary">
-                                                {estimatedRecipients} luot ve da tao
+                                                {estimatedRecipients} lượt vé đã tạo
                                             </Typography>
                                         </Stack>
                                     </Stack>
@@ -136,7 +154,7 @@ const OrganizerSendEmailPage = () => {
 
                         <TextField
                             fullWidth
-                            label="Tieu de email"
+                            label="Tiêu đề email"
                             value={subject}
                             onChange={(e) => setSubject(e.target.value)}
                             disabled={!selectedEventId}
@@ -145,18 +163,18 @@ const OrganizerSendEmailPage = () => {
                             fullWidth
                             multiline
                             minRows={6}
-                            label="Noi dung"
+                            label="Nội dung"
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
                             disabled={!selectedEventId}
                         />
                         <Button
                             variant="contained"
-                            onClick={handleSend}
-                            disabled={!selectedEventId || !subject.trim() || !content.trim()}
+                            onClick={() => void handleSend()}
+                            disabled={isSending || !selectedEventId || !subject.trim() || !content.trim()}
                             sx={{ width: "fit-content" }}
                         >
-                            Gui Email
+                            {isSending ? "Đang gửi..." : "Gửi Email"}
                         </Button>
                     </Stack>
                 </CardContent>

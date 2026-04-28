@@ -1,20 +1,16 @@
-import { Navigate, Outlet, createBrowserRouter } from "react-router";
-import ProtectedRoute from "../components/common/ProtectedRoute";
-import MainLayout from "../layouts/main.layout";
-import CheckoutPage from "../pages/checkout.page";
-import EventDetailPage from "../pages/event-detail.page";
-import EventsPage from "../pages/events.page";
-import HomePage from "../pages/home.page";
-import LoginPage from "../pages/login.page";
-import NotFoundPage from "../pages/not-found.page";
-import OrderDetailPage from "../pages/order-detail.page";
-import OrdersPage from "../pages/orders.page";
-import PaymentPage from "../pages/payment.page";
-import PaymentSuccessPage from "../pages/payment-success.page";
-import TicketDetailPage from "../pages/ticket-detail.page";
-import TicketsPage from "../pages/tickets.page";
+import { Navigate, Outlet, createBrowserRouter, useLocation } from "react-router";
+import CheckoutPage from "../features/attendee/pages/checkout.page";
+import EventDetailPage from "../features/attendee/pages/event-detail.page";
+import EventsPage from "../features/attendee/pages/events.page";
+import HomePage from "../features/attendee/pages/home.page";
+import NotFoundPage from "../features/attendee/pages/not-found.page";
+import OrderDetailPage from "../features/attendee/pages/order-detail.page";
+import OrdersPage from "../features/attendee/pages/orders.page";
+import PaymentPage from "../features/attendee/pages/payment.page";
+import PaymentSuccessPage from "../features/attendee/pages/payment-success.page";
+import TicketDetailPage from "../features/attendee/pages/ticket-detail.page";
+import TicketsPage from "../features/attendee/pages/tickets.page";
 import AppLayout from "./layouts/app.layout";
-import AttendeeHomePage from "../features/attendee/pages/attendee-home.page";
 import PortalLoginPage from "../features/auth/pages/login.page";
 import RegisterPage from "../features/auth/pages/register.page";
 import {
@@ -23,6 +19,7 @@ import {
 } from "../features/auth/services/auth.service";
 import type { UserRole } from "../features/auth/services/auth.service";
 import { OrganizerEventsScope } from "../features/organizer/context/organizer-events.context";
+import OrganizerCheckinPage from "../features/organizer/pages/organizer-checkin.page";
 import OrganizerCreateEventPage from "../features/organizer/pages/organizer-create-event.page";
 import OrganizerEmailHistoryPage from "../features/organizer/pages/organizer-email-history.page";
 import OrganizerEventPage from "../features/organizer/pages/organizer-events.page";
@@ -34,7 +31,7 @@ import ProfilePage from "../features/shared/pages/profile.page";
 
 const RequirePortalAuth = () => {
   if (!getCurrentUser()) {
-    return <Navigate to="/portal/login" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   return <Outlet />;
@@ -44,7 +41,7 @@ const RequireRole = ({ role }: { role: UserRole }) => {
   const user = getCurrentUser();
 
   if (!user) {
-    return <Navigate to="/portal/login" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   if (user.role !== role) {
@@ -66,69 +63,78 @@ const RedirectIfAuthed = () => {
 const RedirectToRoleHome = () => {
   const user = getCurrentUser();
   if (!user) {
-    return <Navigate to="/portal/login" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   return <Navigate to={getHomePathByRole(user.role)} replace />;
 };
 
+const RedirectToAttendeePath = ({ to }: { to: string }) => {
+  const location = useLocation();
+  return <Navigate to={`${to}${location.search}`} replace />;
+};
+
 export const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <MainLayout />,
-    errorElement: <NotFoundPage />,
-    children: [
-      { index: true, element: <HomePage /> },
-      { path: "login", element: <LoginPage /> },
-      { path: "events", element: <EventsPage /> },
-      { path: "events/:slug", element: <EventDetailPage /> },
-      {
-        element: <ProtectedRoute />,
-        children: [
-          { path: "events/:slug/checkout", element: <CheckoutPage /> },
-          { path: "payment", element: <PaymentPage /> },
-          { path: "payment/success", element: <PaymentSuccessPage /> },
-          { path: "orders", element: <OrdersPage /> },
-          { path: "orders/:orderCode", element: <OrderDetailPage /> },
-          { path: "tickets", element: <TicketsPage /> },
-          { path: "tickets/:ticketCode", element: <TicketDetailPage /> },
-        ],
-      },
-    ],
-  },
   {
     element: <RedirectIfAuthed />,
     children: [
-      { path: "/portal/login", element: <PortalLoginPage /> },
-      { path: "/portal/register", element: <RegisterPage /> },
+      { path: "/login", element: <PortalLoginPage /> },
+      { path: "/register", element: <RegisterPage /> },
     ],
   },
   {
     element: <RequirePortalAuth />,
     children: [
       {
-        path: "/portal",
+        path: "/",
         element: <AppLayout />,
         children: [
           { index: true, element: <RedirectToRoleHome /> },
           { path: "profile", element: <ProfilePage /> },
           {
             element: <RequireRole role="ATTENDEE" />,
-            children: [{ path: "attendee", element: <AttendeeHomePage /> }],
+            children: [
+              {
+                path: "attendee",
+                children: [
+                  { index: true, element: <HomePage /> },
+                  { path: "events", element: <EventsPage /> },
+                  { path: "events/:slug", element: <EventDetailPage /> },
+                  { path: "events/:slug/checkout", element: <CheckoutPage /> },
+                  { path: "payment", element: <PaymentPage /> },
+                  { path: "payment/success", element: <PaymentSuccessPage /> },
+                  { path: "orders", element: <OrdersPage /> },
+                  { path: "orders/:orderCode", element: <OrderDetailPage /> },
+                  { path: "tickets", element: <TicketsPage /> },
+                  { path: "tickets/:ticketCode", element: <TicketDetailPage /> },
+                ],
+              },
+              { path: "events", element: <RedirectToAttendeePath to="/attendee/events" /> },
+              { path: "events/:slug", element: <RedirectToAttendeePath to="/attendee/events" /> },
+              { path: "events/:slug/checkout", element: <RedirectToAttendeePath to="/attendee/events" /> },
+              { path: "payment", element: <RedirectToAttendeePath to="/attendee/payment" /> },
+              { path: "payment/success", element: <RedirectToAttendeePath to="/attendee/payment/success" /> },
+              { path: "orders", element: <RedirectToAttendeePath to="/attendee/orders" /> },
+              { path: "orders/:orderCode", element: <RedirectToAttendeePath to="/attendee/orders" /> },
+              { path: "tickets", element: <RedirectToAttendeePath to="/attendee/tickets" /> },
+              { path: "tickets/:ticketCode", element: <RedirectToAttendeePath to="/attendee/tickets" /> },
+            ],
           },
           {
             element: <RequireRole role="ORGANIZER" />,
             children: [
               {
+                path: "organizer",
                 element: <OrganizerEventsScope />,
                 children: [
-                  { path: "organizer", element: <OrganizerHomePage /> },
-                  { path: "organizer/create-event", element: <OrganizerCreateEventPage /> },
-                  { path: "organizer/events", element: <OrganizerEventPage /> },
-                  { path: "organizer/registrations", element: <OrganizerRegistrationsPage /> },
-                  { path: "organizer/send-email", element: <OrganizerSendEmailPage /> },
-                  { path: "organizer/email-history", element: <OrganizerEmailHistoryPage /> },
-                  { path: "organizer/sales-report", element: <OrganizerSalesReportPage /> },
+                  { index: true, element: <OrganizerHomePage /> },
+                  { path: "create-event", element: <OrganizerCreateEventPage /> },
+                  { path: "events", element: <OrganizerEventPage /> },
+                  { path: "registrations", element: <OrganizerRegistrationsPage /> },
+                  { path: "checkin", element: <OrganizerCheckinPage /> },
+                  { path: "send-email", element: <OrganizerSendEmailPage /> },
+                  { path: "email-history", element: <OrganizerEmailHistoryPage /> },
+                  { path: "sales-report", element: <OrganizerSalesReportPage /> },
                 ],
               },
             ],

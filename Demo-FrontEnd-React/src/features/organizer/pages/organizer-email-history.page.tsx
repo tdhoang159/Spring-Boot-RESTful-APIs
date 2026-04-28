@@ -4,6 +4,7 @@ import {
   Card,
   CardContent,
   Chip,
+  Pagination,
   MenuItem,
   InputAdornment,
   Select,
@@ -14,83 +15,19 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import EmailIcon from "@mui/icons-material/Email";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useOrganizerEvents } from "../context/organizer-events.context";
+import { fetchOrganizerEmailHistory } from "../services/organizer-events.api";
+import type { OrganizerEmailHistoryItem, SpringPage } from "../types/organizer-event.types";
 
-type SendStatus = "DRAFT" | "SENT" | "SCHEDULED" | "FAILED";
-
-type EmailHistoryItem = {
-  campaignId: number;
-  eventId: number;
-  eventTitle: string;
-  subject: string;
-  content: string;
-  sendStatus: SendStatus;
-  sentAt: string | null;
-  createdAt: string;
-};
-
-const MOCK_HISTORY: EmailHistoryItem[] = [
-  {
-    campaignId: 1,
-    eventId: 1,
-    eventTitle: "Tech Meetup 2026",
-    subject: "Thong bao: Tech Meetup 2026 sap dien ra!",
-    content: "Chao ban, su kien Tech Meetup 2026 se dien ra vao ngay 15/09/2026. Moi ban tham du.",
-    sendStatus: "SENT",
-    sentAt: "2026-04-10T10:30:00",
-    createdAt: "2026-04-10T10:00:00",
-  },
-  {
-    campaignId: 2,
-    eventId: 2,
-    eventTitle: "Business Summit",
-    subject: "Xac nhan tham du Business Summit",
-    content: "Cam on ban da dang ky tham du Business Summit. Chung toi rat vui duoc gap ban.",
-    sendStatus: "SENT",
-    sentAt: "2026-04-15T09:00:00",
-    createdAt: "2026-04-14T18:00:00",
-  },
-  {
-    campaignId: 3,
-    eventId: 1,
-    eventTitle: "Tech Meetup 2026",
-    subject: "Cap nhat lich trinh Tech Meetup 2026",
-    content: "Lich trinh chi tiet cua Tech Meetup 2026 da duoc cap nhat. Vui long kiem tra trang web.",
-    sendStatus: "SENT",
-    sentAt: "2026-04-20T14:00:00",
-    createdAt: "2026-04-20T13:30:00",
-  },
-  {
-    campaignId: 4,
-    eventId: 3,
-    eventTitle: "Frontend Workshop",
-    subject: "Reminder: Frontend Workshop bat dau vao ngay mai",
-    content: "Nhac nho ban rang Frontend Workshop se bat dau vao ngay mai luc 08:30 tai Innovation Hub.",
-    sendStatus: "SCHEDULED",
-    sentAt: null,
-    createdAt: "2026-04-22T11:00:00",
-  },
-  {
-    campaignId: 5,
-    eventId: 4,
-    eventTitle: "Startup Connect Day",
-    subject: "Thong bao mo dang ky Startup Connect Day",
-    content: "Startup Connect Day chinh thuc mo dang ky. Dang ky ngay de co mat trong su kien.",
-    sendStatus: "SENT",
-    sentAt: "2026-04-23T08:00:00",
-    createdAt: "2026-04-22T20:00:00",
-  },
-];
-
-const statusColor: Record<SendStatus, "success" | "default" | "warning" | "error"> = {
+const statusColor: Record<string, "success" | "default" | "warning" | "error"> = {
   SENT: "success",
   SCHEDULED: "warning",
   DRAFT: "default",
   FAILED: "error",
 };
 
-const statusLabel: Record<SendStatus, string> = {
+const statusLabel: Record<string, string> = {
   SENT: "Đã gửi",
   SCHEDULED: "Đã lên lịch",
   DRAFT: "Nháp",
@@ -109,24 +46,68 @@ const formatDateTime = (dt: string | null) => {
 };
 
 const OrganizerEmailHistoryPage = () => {
-  const { events, isLoading, error, refreshEvents } = useOrganizerEvents();
+  const { organizerId, events, isLoading, error, refreshEvents } = useOrganizerEvents();
   const [selectedEventId, setSelectedEventId] = useState<string>("ALL");
   const [selectedStatus, setSelectedStatus] = useState<string>("ALL");
   const [searchText, setSearchText] = useState("");
+  const [history, setHistory] = useState<OrganizerEmailHistoryItem[]>([]);
+  const [historyPage, setHistoryPage] = useState<SpringPage<OrganizerEmailHistoryItem> | null>(null);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
+  const [historyError, setHistoryError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
 
-  const history = MOCK_HISTORY;
+  const loadEmailHistory = async () => {
+    try {
+      setIsLoadingHistory(true);
+      setHistoryError(null);
+      const eventId = selectedEventId === "ALL" ? undefined : Number(selectedEventId);
+      const sendStatus = selectedStatus === "ALL" ? undefined : selectedStatus;
+      const pageData = await fetchOrganizerEmailHistory(organizerId, {
+        eventId,
+        sendStatus,
+        page: page - 1,
+        size: pageSize,
+      });
+      setHistoryPage(pageData);
+      setHistory(pageData.content ?? []);
+    } catch (apiError) {
+      setHistoryError(apiError instanceof Error ? apiError.message : "Không tải được lịch sử email");
+    } finally {
+      setIsLoadingHistory(false);
+    }
+  };
+
+  useEffect(() => {
+    void loadEmailHistory();
+  }, [organizerId, selectedEventId, selectedStatus, page]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [selectedEventId, selectedStatus]);
 
   const filtered = useMemo(() => {
     return history.filter((item) => {
-      const matchEvent = selectedEventId === "ALL" || item.eventId === Number(selectedEventId);
-      const matchStatus = selectedStatus === "ALL" || item.sendStatus === selectedStatus;
       const matchSearch =
         searchText.trim() === "" ||
         item.subject.toLowerCase().includes(searchText.toLowerCase()) ||
         item.eventTitle.toLowerCase().includes(searchText.toLowerCase());
-      return matchEvent && matchStatus && matchSearch;
+      return matchSearch;
     });
-  }, [history, selectedEventId, selectedStatus, searchText]);
+  }, [history, searchText]);
+
+  const getStatusColor = (status: string): "success" | "default" | "warning" | "error" => {
+    return statusColor[status] ?? "default";
+  };
+
+  const getStatusLabel = (status: string): string => {
+    return statusLabel[status] ?? status;
+  };
+
+  const handleReload = async () => {
+    await refreshEvents();
+    await loadEmailHistory();
+  };
 
   return (
     <Stack spacing={3}>
@@ -134,12 +115,13 @@ const OrganizerEmailHistoryPage = () => {
         <Typography variant="h4" sx={{ fontWeight: 700 }}>
           Lịch Sử Email Đã Gửi
         </Typography>
-        <Button variant="outlined" onClick={() => void refreshEvents()}>
-          Tải lại sự kiện
+        <Button variant="outlined" onClick={() => void handleReload()}>
+          Tải lại
         </Button>
       </Stack>
 
       {error ? <Typography color="error">{error}</Typography> : null}
+      {historyError ? <Typography color="error">{historyError}</Typography> : null}
 
       <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
         <TextField
@@ -190,11 +172,7 @@ const OrganizerEmailHistoryPage = () => {
         </Select>
       </Stack>
 
-      {isLoading ? <Typography color="text.secondary">Đang tải danh sách sự kiện...</Typography> : null}
-
-      <Typography variant="body2" color="text.secondary">
-        Hiển thị {filtered.length} / {history.length} email
-      </Typography>
+      {isLoading || isLoadingHistory ? <Typography color="text.secondary">Đang tải dữ liệu...</Typography> : null}
 
       {filtered.length === 0 ? (
         <Card elevation={0} sx={{ borderRadius: 3, border: "1px solid rgba(11,53,88,0.12)" }}>
@@ -224,7 +202,7 @@ const OrganizerEmailHistoryPage = () => {
                         Sự kiện: <strong>{item.eventTitle}</strong>
                       </Typography>
                     </Stack>
-                    <Chip label={statusLabel[item.sendStatus]} color={statusColor[item.sendStatus]} size="small" />
+                    <Chip label={getStatusLabel(item.sendStatus)} color={getStatusColor(item.sendStatus)} size="small" />
                   </Stack>
 
                   <Typography
@@ -258,6 +236,23 @@ const OrganizerEmailHistoryPage = () => {
           ))}
         </Stack>
       )}
+
+      {(historyPage?.totalPages ?? 0) > 1 ? (
+        <Stack sx={{ alignItems: "center", pt: 1 }}>
+          <Pagination
+            color="primary"
+            page={page}
+            count={historyPage?.totalPages ?? 1}
+            onChange={(_, value) => setPage(value)}
+          />
+        </Stack>
+      ) : null}
+
+      {!isLoadingHistory && !historyError ? (
+        <Typography variant="body2" color="text.secondary">
+          Hiển thị {filtered.length} / {historyPage?.totalElements ?? 0} email
+        </Typography>
+      ) : null}
     </Stack>
   );
 };

@@ -2,6 +2,7 @@ package com.truongduchoang.SpringBootRESTfullAPIs.controllers;
 
 import com.truongduchoang.SpringBootRESTfullAPIs.models.ApiResponse;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.request.EventCreateRequest;
+import com.truongduchoang.SpringBootRESTfullAPIs.dto.request.EventUpdateRequest;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.EventRegistrationResponse;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.EventResponse;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.OrganizerEmailHistoryResponse;
@@ -10,18 +11,26 @@ import com.truongduchoang.SpringBootRESTfullAPIs.dto.request.TicketCheckinReques
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.SendEventEmailResponse;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.TicketCheckinResponse;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.TicketSalesReportResponse;
+import com.truongduchoang.SpringBootRESTfullAPIs.models.enums.EmailSendStatus;
 import com.truongduchoang.SpringBootRESTfullAPIs.services.EventService;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.MediaType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.PutMapping;
 
 import jakarta.validation.Valid;
 
@@ -80,11 +89,18 @@ public class OrganizerController {
 
     // GET /organizers/{organizerId}/email-history?eventId=1
     @GetMapping("/{organizerId}/email-history")
-    public ResponseEntity<ApiResponse<List<OrganizerEmailHistoryResponse>>> getOrganizerEmailHistory(
+    public ResponseEntity<ApiResponse<Page<OrganizerEmailHistoryResponse>>> getOrganizerEmailHistory(
             @PathVariable Long organizerId,
-            @RequestParam(required = false) Long eventId) {
-        List<OrganizerEmailHistoryResponse> history = eventService.getOrganizerEmailHistory(organizerId, eventId);
-        ApiResponse<List<OrganizerEmailHistoryResponse>> response = new ApiResponse<>(
+            @RequestParam(required = false) Long eventId,
+            @RequestParam(required = false) EmailSendStatus sendStatus,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Page<OrganizerEmailHistoryResponse> history = eventService.getOrganizerEmailHistory(
+                organizerId,
+                eventId,
+                sendStatus,
+                PageRequest.of(page, size));
+        ApiResponse<Page<OrganizerEmailHistoryResponse>> response = new ApiResponse<>(
             HttpStatus.OK,
             "Get organizer email history successful",
             history,
@@ -93,10 +109,10 @@ public class OrganizerController {
     }
 
     // POST /organizers/{organizerId}/events + body EventCreateRequest { categoryId, title, slug, shortDescription, description, venueName, venueAddress, city, locationType, meetingUrl, startTime, endTime, registrationDeadline, ticketTypes: [ { ticketName, description, price, quantityTotal, maxPerOrder, saleStartTime, saleEndTime, status } ] }
-    @PostMapping("/{organizerId}/events")
+    @PostMapping(value = "/{organizerId}/events", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<EventResponse>> createEvent(
             @PathVariable Long organizerId,
-            @RequestBody EventCreateRequest request) {
+            @Valid @RequestBody EventCreateRequest request) {
         request.setOrganizerId(organizerId);
         EventResponse createdEvent = eventService.createEvent(request, null);
         ApiResponse<EventResponse> response = new ApiResponse<>(
@@ -105,6 +121,52 @@ public class OrganizerController {
             createdEvent,
             null);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PostMapping(value = "/{organizerId}/events", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponse<EventResponse>> createEventWithBanner(
+            @PathVariable Long organizerId,
+            @Valid @ModelAttribute EventCreateRequest request,
+            @RequestPart(value = "banner", required = false) MultipartFile banner) {
+        request.setOrganizerId(organizerId);
+        EventResponse createdEvent = eventService.createEvent(request, banner);
+        ApiResponse<EventResponse> response = new ApiResponse<>(
+                HttpStatus.CREATED,
+                "Create event successful",
+                createdEvent,
+                null);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PutMapping(value = "/{organizerId}/events/{eventId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse<EventResponse>> updateOrganizerEvent(
+            @PathVariable Long organizerId,
+            @PathVariable Long eventId,
+            @Valid @RequestBody EventUpdateRequest request) {
+        request.setOrganizerId(organizerId);
+        EventResponse updatedEvent = eventService.updateEvent(eventId, request, null);
+        ApiResponse<EventResponse> response = new ApiResponse<>(
+                HttpStatus.OK,
+                "Update event successful",
+                updatedEvent,
+                null);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping(value = "/{organizerId}/events/{eventId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponse<EventResponse>> updateOrganizerEventWithBanner(
+            @PathVariable Long organizerId,
+            @PathVariable Long eventId,
+            @Valid @ModelAttribute EventUpdateRequest request,
+            @RequestPart(value = "banner", required = false) MultipartFile banner) {
+        request.setOrganizerId(organizerId);
+        EventResponse updatedEvent = eventService.updateEvent(eventId, request, banner);
+        ApiResponse<EventResponse> response = new ApiResponse<>(
+                HttpStatus.OK,
+                "Update event successful",
+                updatedEvent,
+                null);
+        return ResponseEntity.ok(response);
     }
 
     // PATCH /organizers/{organizerId}/events/{eventId}/publish

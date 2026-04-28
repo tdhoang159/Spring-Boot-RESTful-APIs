@@ -7,4 +7,5 @@ import com.truongduchoang.SpringBootRESTfullAPIs.models.TicketType;
 
 @Repository
 public interface TicketTypeRepository extends JpaRepository<TicketType, Long> {
+	void deleteByEvent_EventId(Long eventId);
 }
