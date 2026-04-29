@@ -13,6 +13,7 @@ import {
 import { Link as RouterLink, useNavigate } from "react-router";
 import { register } from "../services/auth.service";
 import type { RegisterRole } from "../services/auth.service";
+import AuthPublicShell from "../components/auth-public-shell";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -37,38 +38,36 @@ const RegisterPage = () => {
   };
 
   return (
-    <Box className="auth-page-wrap">
-      <Card className="auth-card" elevation={0}>
-        <CardContent>
-          <Stack spacing={2.5}>
-            <Typography variant="h4" sx={{ fontWeight: 700 }}>
-              Register
-            </Typography>
-            <Typography color="text.secondary">Đăng ký tài khoản cho Người tham dự hoặc Người tổ chức.</Typography>
-            {error ? <Alert severity="error">{error}</Alert> : null}
-            <TextField label="Full Name" value={fullName} onChange={(e) => setFullName(e.target.value)} fullWidth />
-            <TextField label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} fullWidth />
-            <TextField
-              label="Password (min 6 chars)"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              fullWidth
-            />
-            <TextField select label="Role" value={role} onChange={(e) => setRole(e.target.value as RegisterRole)} fullWidth>
-              <MenuItem value="ATTENDEE">Người tham dự</MenuItem>
-              <MenuItem value="ORGANIZER">Người tổ chức</MenuItem>
-            </TextField>
-            <Button variant="contained" size="large" disabled={!canSubmit} onClick={handleSubmit}>
-              Đăng ký
-            </Button>
-            <Typography color="text.secondary">
-              Đã có tài khoản? <RouterLink to="/login">Đăng nhập ngay</RouterLink>
-            </Typography>
-          </Stack>
-        </CardContent>
-      </Card>
-    </Box>
+    <AuthPublicShell title="Đăng ký" subtitle="Tạo tài khoản để tham dự hoặc tổ chức sự kiện.">
+      <Box className="auth-page-wrap">
+        <Card className="auth-card" elevation={0}>
+          <CardContent>
+            <Stack spacing={2.5}>
+              {error ? <Alert severity="error">{error}</Alert> : null}
+              <TextField label="Full Name" value={fullName} onChange={(e) => setFullName(e.target.value)} fullWidth />
+              <TextField label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} fullWidth />
+              <TextField
+                label="Password (min 6 chars)"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                fullWidth
+              />
+              <TextField select label="Role" value={role} onChange={(e) => setRole(e.target.value as RegisterRole)} fullWidth>
+                <MenuItem value="ATTENDEE">Người tham dự</MenuItem>
+                <MenuItem value="ORGANIZER">Người tổ chức</MenuItem>
+              </TextField>
+              <Button variant="contained" size="large" disabled={!canSubmit} onClick={handleSubmit}>
+                Đăng ký
+              </Button>
+              <Typography color="text.secondary">
+                Đã có tài khoản? <RouterLink to="/login">Đăng nhập ngay</RouterLink>
+              </Typography>
+            </Stack>
+          </CardContent>
+        </Card>
+      </Box>
+    </AuthPublicShell>
   );
 };
 

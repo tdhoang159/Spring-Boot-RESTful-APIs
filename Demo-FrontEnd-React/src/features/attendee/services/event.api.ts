@@ -57,6 +57,25 @@ export interface PagedResponse<T> {
   size: number;
 }
 
+interface ApiResponse<T> {
+  status: string;
+  message: string;
+  data: T;
+  errorCode?: string | null;
+  timeStamp?: string;
+}
+
+export interface EventCategory {
+  id: string;
+  label: string;
+}
+
+interface RawCategory {
+  categoryId: number;
+  categoryName: string;
+  status?: string;
+}
+
 interface RawTicketType {
   ticketTypeId: number;
   ticketName: string;
@@ -134,6 +153,11 @@ const mapEventDetail = (event: RawEventDetail): EventDetail => ({
   ticketTypes: (event.ticketTypes ?? []).map(mapTicketType),
 });
 
+const mapCategory = (category: RawCategory): EventCategory => ({
+  id: String(category.categoryId),
+  label: category.categoryName,
+});
+
 // ── API functions ─────────────────────────────────────────────────────────────
 
 // GET /api/v1/events
@@ -153,4 +177,12 @@ export const getEventDetailAPI = async (
 ): Promise<EventDetail> => {
   const res = await axiosInstance.get<RawEventDetail>(`/api/v1/events/${slug}`);
   return mapEventDetail(res.data);
+};
+
+// GET /api/categories
+export const getEventCategoriesAPI = async (): Promise<EventCategory[]> => {
+  const res = await axiosInstance.get<ApiResponse<RawCategory[]>>("/api/categories");
+  return (res.data.data ?? [])
+    .filter((category) => category.status === "ACTIVE")
+    .map(mapCategory);
 };

@@ -7,13 +7,25 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
+import { useEffect, useState } from "react";
 import { Link as RouterLink, Outlet, useLocation, useNavigate } from "react-router";
 import { getCurrentUser, logout } from "../../features/auth/services/auth.service";
+import { subscribeAuthChange } from "../../features/auth/services/auth-session.service";
 
 const AppLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const user = getCurrentUser();
+  const [user, setUser] = useState(getCurrentUser());
+
+  useEffect(() => {
+    const syncUser = () => {
+      setUser(getCurrentUser());
+    };
+
+    syncUser();
+    const unsubscribe = subscribeAuthChange(syncUser);
+    return unsubscribe;
+  }, []);
 
   const organizerItems = [
     { label: "Trang chủ", to: "/organizer" },
@@ -46,7 +58,8 @@ const AppLayout = () => {
 
   const handleLogout = () => {
     logout();
-    navigate("/");
+    setUser(null);
+    navigate("/", { replace: true });
   };
 
   return (

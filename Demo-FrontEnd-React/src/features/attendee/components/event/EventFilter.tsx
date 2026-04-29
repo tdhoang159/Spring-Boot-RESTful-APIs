@@ -1,7 +1,8 @@
 import { Input, Select, DatePicker, Button, Row, Col } from "antd";
 import { SearchOutlined, FilterOutlined } from "@ant-design/icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
+import { getEventCategoriesAPI, type EventCategory } from "../../services/event.api";
 
 const { Option } = Select;
 
@@ -26,15 +27,6 @@ const CITIES = [
   "Huế", "Nha Trang", "Đà Lạt", "Hải Phòng",
 ];
 
-const CATEGORIES = [
-  { id: "music",   label: "Âm nhạc" },
-  { id: "sport",   label: "Thể thao" },
-  { id: "art",     label: "Nghệ thuật" },
-  { id: "seminar", label: "Hội thảo" },
-  { id: "food",    label: "Ẩm thực" },
-  { id: "travel",  label: "Du lịch" },
-];
-
 // ── Component ─────────────────────────────────────────────────────────────────
 const EventFilter: React.FC<EventFilterProps> = ({
   initialValues = {},
@@ -42,6 +34,32 @@ const EventFilter: React.FC<EventFilterProps> = ({
   loading = false,
 }) => {
   const [values, setValues] = useState<FilterValues>(initialValues);
+  const [categories, setCategories] = useState<EventCategory[]>([]);
+
+  useEffect(() => {
+    setValues(initialValues);
+  }, [initialValues]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadCategories = async () => {
+      try {
+        const data = await getEventCategoriesAPI();
+        if (isMounted) {
+          setCategories(data);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    void loadCategories();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const set = (key: keyof FilterValues, value: string) =>
     setValues((prev) => ({ ...prev, [key]: value }));
@@ -93,7 +111,7 @@ const EventFilter: React.FC<EventFilterProps> = ({
             allowClear
             style={styles.select}
           >
-            {CATEGORIES.map((c) => (
+            {categories.map((c) => (
               <Option key={c.id} value={c.id}>{c.label}</Option>
             ))}
           </Select>

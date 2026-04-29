@@ -1,22 +1,6 @@
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
-
-// ── Types ─────────────────────────────────────────────────────────────────────
-interface Category {
-  id: string;
-  label: string;
-  emoji: string;
-}
-
-// ── Data ──────────────────────────────────────────────────────────────────────
-const CATEGORIES: Category[] = [
-  { id: "",        label: "Tất cả",    emoji: "🎪" },
-  { id: "music",   label: "Âm nhạc",  emoji: "🎵" },
-  { id: "sport",   label: "Thể thao", emoji: "⚽" },
-  { id: "art",     label: "Nghệ thuật", emoji: "🎭" },
-  { id: "seminar", label: "Hội thảo", emoji: "🎤" },
-  { id: "food",    label: "Ẩm thực",  emoji: "🍜" },
-  { id: "travel",  label: "Du lịch",  emoji: "✈️" },
-];
+import { getEventCategoriesAPI, type EventCategory } from "../../services/event.api";
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 interface CategoryTabsProps {
@@ -27,8 +11,30 @@ interface CategoryTabsProps {
 const CategoryTabs: React.FC<CategoryTabsProps> = ({ onChange }) => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const [categories, setCategories] = useState<EventCategory[]>([]);
 
   const activeId = searchParams.get("categoryId") ?? "";
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadCategories = async () => {
+      try {
+        const data = await getEventCategoriesAPI();
+        if (isMounted) {
+          setCategories(data);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    void loadCategories();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleClick = (id: string) => {
     if (onChange) {
@@ -47,7 +53,7 @@ const CategoryTabs: React.FC<CategoryTabsProps> = ({ onChange }) => {
   return (
     <div style={styles.wrap}>
       <div style={styles.track}>
-        {CATEGORIES.map((cat) => {
+        {[{ id: "", label: "Tất cả" }, ...categories].map((cat) => {
           const isActive = cat.id === activeId;
           return (
             <button
@@ -58,7 +64,6 @@ const CategoryTabs: React.FC<CategoryTabsProps> = ({ onChange }) => {
                 ...(isActive ? styles.tabActive : {}),
               }}
             >
-              <span style={styles.emoji}>{cat.emoji}</span>
               <span>{cat.label}</span>
             </button>
           );
@@ -104,8 +109,5 @@ const styles: Record<string, React.CSSProperties> = {
     borderColor: "#2DC275",
     color: "#fff",
     fontWeight: 700,
-  },
-  emoji: {
-    fontSize: 16,
   },
 };

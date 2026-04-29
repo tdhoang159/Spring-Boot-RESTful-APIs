@@ -2,6 +2,7 @@ import CampaignIcon from "@mui/icons-material/Campaign";
 import SendIcon from '@mui/icons-material/Send';
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import GroupIcon from "@mui/icons-material/Group";
+import CenterFocusStrongIcon from '@mui/icons-material/CenterFocusStrong';
 import InsertChartIcon from "@mui/icons-material/InsertChart";
 import PublishIcon from "@mui/icons-material/Publish";
 import { Box, Card, CardContent, Grid, Stack, Typography } from "@mui/material";
@@ -25,6 +26,12 @@ const features = [
         desc: "Xem danh sách người tham dự đã đăng ký.",
         to: "/organizer/registrations",
         icon: <GroupIcon fontSize="large" />,
+    },
+    {
+        title: "Quét vé",
+        desc: "Quét mã vé của người tham dự.",
+        to: "/organizer/scan-ticket",
+        icon: <CenterFocusStrongIcon fontSize="large" />,
     },
     {
         title: "Gửi email",

@@ -10,19 +10,22 @@ import type { EventItem, EventListParams } from "../services/event.api";
 
 const { Title } = Typography;
 
+const getFiltersFromSearchParams = (searchParams: URLSearchParams): FilterValues => ({
+  keyword: searchParams.get("keyword") ?? "",
+  city: searchParams.get("city") ?? "",
+  categoryId: searchParams.get("categoryId") ?? "",
+  date: searchParams.get("date") ?? "",
+  locationType:
+    (searchParams.get("locationType") as FilterValues["locationType"]) ?? undefined,
+});
+
 const EventsPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const [events, setEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
-  const [filters, setFilters] = useState<FilterValues>({
-    keyword:      searchParams.get("keyword")      ?? "",
-    city:         searchParams.get("city")         ?? "",
-    categoryId:   searchParams.get("categoryId")   ?? "",
-    date:         searchParams.get("date")         ?? "",
-    locationType: (searchParams.get("locationType") as FilterValues["locationType"]) ?? undefined,
-  });
+  const [filters, setFilters] = useState<FilterValues>(() => getFiltersFromSearchParams(searchParams));
 
   const fetchEvents = async (f: FilterValues, p = 1) => {
     setLoading(true);
@@ -48,7 +51,12 @@ const EventsPage: React.FC = () => {
     }
   };
 
-  useEffect(() => { fetchEvents(filters, 1); }, []);
+  useEffect(() => {
+    const nextFilters = getFiltersFromSearchParams(searchParams);
+    setFilters(nextFilters);
+    setPage(1);
+    void fetchEvents(nextFilters, 1);
+  }, [searchParams]);
 
   const handleFilter = (values: FilterValues) => {
     setFilters(values);
