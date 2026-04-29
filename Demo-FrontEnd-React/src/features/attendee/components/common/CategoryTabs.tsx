@@ -40,7 +40,7 @@ const CategoryTabs: React.FC<CategoryTabsProps> = ({ onChange }) => {
       } else {
         params.delete("categoryId");
       }
-      navigate(`/attendee/events?${params.toString()}`);
+      navigate(`/events?${params.toString()}`);
     }
   };
 

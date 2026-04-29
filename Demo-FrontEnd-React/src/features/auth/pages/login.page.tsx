@@ -1,13 +1,15 @@
 import { useMemo, useState } from "react";
 import { Alert, Box, Button, Card, CardContent, Stack, TextField, Typography } from "@mui/material";
-import { Link as RouterLink, useNavigate } from "react-router";
+import { Link as RouterLink, useLocation, useNavigate } from "react-router";
 import { getCurrentUser, getHomePathByRole, login } from "../services/auth.service";
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const redirectTo = (location.state as { from?: string } | null)?.from;
 
   const canSubmit = useMemo(() => email.trim().length > 0 && password.trim().length > 0, [email, password]);
 
@@ -20,11 +22,11 @@ const LoginPage = () => {
 
     const user = getCurrentUser();
     if (user) {
-      navigate(getHomePathByRole(user.role));
+      navigate(redirectTo || getHomePathByRole(user.role), { replace: true });
       return;
     }
 
-    navigate("/");
+    navigate(redirectTo || "/", { replace: true });
   };
 
   return (

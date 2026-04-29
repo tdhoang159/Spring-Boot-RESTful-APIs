@@ -9,6 +9,7 @@ import {
 import TicketTypeCard from "../components/ticket/TicketTypeCard";
 import { getEventDetailAPI } from "../services/event.api";
 import type { EventDetail } from "../services/event.api";
+import { getCurrentUser } from "../../auth/services/auth.service";
 
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleDateString("vi-VN", {
@@ -28,7 +29,7 @@ const EventDetailPage: React.FC = () => {
     setLoading(true);
     getEventDetailAPI(slug)
       .then(setEvent)
-      .catch(() => navigate("/attendee/events"))
+      .catch(() => navigate("/events"))
       .finally(() => setLoading(false));
   }, [slug]);
 
@@ -51,7 +52,16 @@ const EventDetailPage: React.FC = () => {
         totalAmount: ticketType.price * quantity,
       })
     );
-    navigate(`/attendee/events/${slug}/checkout`);
+    if (!getCurrentUser()) {
+      navigate("/login", {
+        state: {
+          from: `/events/${slug}/checkout`,
+        },
+      });
+      return;
+    }
+
+    navigate(`/events/${slug}/checkout`);
   };
 
   if (loading) {

@@ -100,7 +100,7 @@ const PaymentStatusCard: React.FC<PaymentStatusCardProps> = ({
             type="primary"
             size="large"
             style={styles.primaryBtn}
-            onClick={() => navigate("/attendee/tickets")}
+            onClick={() => navigate("/tickets")}
           >
             Xem vé của tôi
           </Button>
@@ -119,7 +119,7 @@ const PaymentStatusCard: React.FC<PaymentStatusCardProps> = ({
           <Button
             size="large"
             style={styles.secondaryBtn}
-            onClick={() => navigate("/attendee/orders")}
+            onClick={() => navigate("/orders")}
           >
             Đơn hàng của tôi
           </Button>

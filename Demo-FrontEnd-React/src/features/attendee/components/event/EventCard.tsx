@@ -53,7 +53,7 @@ const EventCard: React.FC<EventCardProps> = ({
       : `${formatPrice(minPrice)} - ${formatPrice(maxPrice)}`;
 
   return (
-    <div style={styles.wrap} onClick={() => navigate(`/attendee/events/${slug}`)}>
+    <div style={styles.wrap} onClick={() => navigate(`/events/${slug}`)}>
       {/* Banner */}
       <div style={styles.imageWrap}>
         <img src={bannerUrl} alt={title} style={styles.image} />

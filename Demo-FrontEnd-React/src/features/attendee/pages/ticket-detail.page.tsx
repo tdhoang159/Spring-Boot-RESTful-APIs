@@ -16,7 +16,7 @@ const TicketDetailPage: React.FC = () => {
     if (!ticketCode) return;
     getTicketDetailAPI(ticketCode)
       .then(setTicket)
-      .catch(() => navigate("/attendee/tickets"))
+      .catch(() => navigate("/tickets"))
       .finally(() => setLoading(false));
   }, [ticketCode]);
 
@@ -28,7 +28,7 @@ const TicketDetailPage: React.FC = () => {
 
   return (
     <div style={styles.wrap}>
-      <button style={styles.back} onClick={() => navigate("/attendee/tickets")}>
+      <button style={styles.back} onClick={() => navigate("/tickets")}>
         <ArrowLeftOutlined /> Vé của tôi
       </button>
 

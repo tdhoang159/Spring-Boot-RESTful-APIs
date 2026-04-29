@@ -44,7 +44,7 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/api/v1/events/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/sepay/webhook").permitAll()
                         .requestMatchers("/api/users/me/profile/**").authenticated()
                         .requestMatchers("/api/orders/**", "/api/tickets/**").authenticated()

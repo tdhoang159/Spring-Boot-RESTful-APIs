@@ -1,7 +1,9 @@
 package com.truongduchoang.SpringBootRESTfullAPIs.controllers;
 
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.request.LoginRequest;
+import com.truongduchoang.SpringBootRESTfullAPIs.dto.request.RegisterRequest;
 import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.AuthResponse;
+import com.truongduchoang.SpringBootRESTfullAPIs.dto.response.RegisterResponse;
 import com.truongduchoang.SpringBootRESTfullAPIs.models.ApiResponse;
 import com.truongduchoang.SpringBootRESTfullAPIs.services.AuthService;
 import jakarta.validation.Valid;
@@ -29,6 +31,17 @@ public class AuthController {
         return ResponseEntity.ok(new ApiResponse<>(
                 HttpStatus.OK,
                 "Login successful",
+                response,
+                null));
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<ApiResponse<RegisterResponse>> register(
+            @Valid @RequestBody RegisterRequest request) {
+        RegisterResponse response = authService.register(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(
+                HttpStatus.CREATED,
+                "Register successful",
                 response,
                 null));
     }

@@ -1,4 +1,4 @@
-import { Navigate, Outlet, createBrowserRouter, useLocation } from "react-router";
+import { Navigate, Outlet, createBrowserRouter, useLocation, useParams } from "react-router";
 import CheckoutPage from "../features/attendee/pages/checkout.page";
 import EventDetailPage from "../features/attendee/pages/event-detail.page";
 import EventsPage from "../features/attendee/pages/events.page";
@@ -30,8 +30,16 @@ import OrganizerSendEmailPage from "../features/organizer/pages/organizer-send-e
 import ProfilePage from "../features/shared/pages/profile.page";
 
 const RequirePortalAuth = () => {
+  const location = useLocation();
+
   if (!getCurrentUser()) {
-    return <Navigate to="/login" replace />;
+    return (
+      <Navigate
+        to="/login"
+        replace
+        state={{ from: `${location.pathname}${location.search}` }}
+      />
+    );
   }
 
   return <Outlet />;
@@ -60,18 +68,33 @@ const RedirectIfAuthed = () => {
   return <Outlet />;
 };
 
-const RedirectToRoleHome = () => {
-  const user = getCurrentUser();
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return <Navigate to={getHomePathByRole(user.role)} replace />;
-};
-
-const RedirectToAttendeePath = ({ to }: { to: string }) => {
+const RedirectWithSearch = ({ to }: { to: string }) => {
   const location = useLocation();
   return <Navigate to={`${to}${location.search}`} replace />;
+};
+
+const RedirectLegacyAttendeeEventDetail = () => {
+  const { slug } = useParams();
+  const location = useLocation();
+  return <Navigate to={`/events/${slug}${location.search}`} replace />;
+};
+
+const RedirectLegacyAttendeeCheckout = () => {
+  const { slug } = useParams();
+  const location = useLocation();
+  return <Navigate to={`/events/${slug}/checkout${location.search}`} replace />;
+};
+
+const RedirectLegacyOrderDetail = () => {
+  const { orderCode } = useParams();
+  const location = useLocation();
+  return <Navigate to={`/orders/${orderCode}${location.search}`} replace />;
+};
+
+const RedirectLegacyTicketDetail = () => {
+  const { ticketCode } = useParams();
+  const location = useLocation();
+  return <Navigate to={`/tickets/${ticketCode}${location.search}`} replace />;
 };
 
 export const router = createBrowserRouter([
@@ -83,43 +106,35 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    element: <RequirePortalAuth />,
+    path: "/",
+    element: <AppLayout />,
     children: [
+      { index: true, element: <HomePage /> },
+      { path: "events", element: <EventsPage /> },
+      { path: "events/:slug", element: <EventDetailPage /> },
+      { path: "attendee", element: <Navigate to="/" replace /> },
+      { path: "attendee/events", element: <RedirectWithSearch to="/events" /> },
+      { path: "attendee/events/:slug", element: <RedirectLegacyAttendeeEventDetail /> },
+      { path: "attendee/events/:slug/checkout", element: <RedirectLegacyAttendeeCheckout /> },
+      { path: "attendee/payment", element: <RedirectWithSearch to="/payment" /> },
+      { path: "attendee/payment/success", element: <RedirectWithSearch to="/payment/success" /> },
+      { path: "attendee/orders", element: <RedirectWithSearch to="/orders" /> },
+      { path: "attendee/orders/:orderCode", element: <RedirectLegacyOrderDetail /> },
+      { path: "attendee/tickets", element: <RedirectWithSearch to="/tickets" /> },
+      { path: "attendee/tickets/:ticketCode", element: <RedirectLegacyTicketDetail /> },
       {
-        path: "/",
-        element: <AppLayout />,
+        element: <RequirePortalAuth />,
         children: [
-          { index: true, element: <RedirectToRoleHome /> },
           { path: "profile", element: <ProfilePage /> },
-          {
-            element: <RequireRole role="ATTENDEE" />,
-            children: [
-              {
-                path: "attendee",
-                children: [
-                  { index: true, element: <HomePage /> },
-                  { path: "events", element: <EventsPage /> },
-                  { path: "events/:slug", element: <EventDetailPage /> },
-                  { path: "events/:slug/checkout", element: <CheckoutPage /> },
-                  { path: "payment", element: <PaymentPage /> },
-                  { path: "payment/success", element: <PaymentSuccessPage /> },
-                  { path: "orders", element: <OrdersPage /> },
-                  { path: "orders/:orderCode", element: <OrderDetailPage /> },
-                  { path: "tickets", element: <TicketsPage /> },
-                  { path: "tickets/:ticketCode", element: <TicketDetailPage /> },
-                ],
-              },
-              { path: "events", element: <RedirectToAttendeePath to="/attendee/events" /> },
-              { path: "events/:slug", element: <RedirectToAttendeePath to="/attendee/events" /> },
-              { path: "events/:slug/checkout", element: <RedirectToAttendeePath to="/attendee/events" /> },
-              { path: "payment", element: <RedirectToAttendeePath to="/attendee/payment" /> },
-              { path: "payment/success", element: <RedirectToAttendeePath to="/attendee/payment/success" /> },
-              { path: "orders", element: <RedirectToAttendeePath to="/attendee/orders" /> },
-              { path: "orders/:orderCode", element: <RedirectToAttendeePath to="/attendee/orders" /> },
-              { path: "tickets", element: <RedirectToAttendeePath to="/attendee/tickets" /> },
-              { path: "tickets/:ticketCode", element: <RedirectToAttendeePath to="/attendee/tickets" /> },
-            ],
-          },
+          { element: <RequireRole role="ATTENDEE" />, children: [
+            { path: "events/:slug/checkout", element: <CheckoutPage /> },
+            { path: "payment", element: <PaymentPage /> },
+            { path: "payment/success", element: <PaymentSuccessPage /> },
+            { path: "orders", element: <OrdersPage /> },
+            { path: "orders/:orderCode", element: <OrderDetailPage /> },
+            { path: "tickets", element: <TicketsPage /> },
+            { path: "tickets/:ticketCode", element: <TicketDetailPage /> },
+          ] },
           {
             element: <RequireRole role="ORGANIZER" />,
             children: [

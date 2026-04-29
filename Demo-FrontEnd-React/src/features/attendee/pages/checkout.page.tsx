@@ -46,7 +46,7 @@ const CheckoutPage: React.FC = () => {
   useEffect(() => {
     if (missingCheckoutState) {
       message.error("Không tìm thấy thông tin đặt vé");
-      navigate("/attendee/events");
+      navigate("/events");
     }
   }, [missingCheckoutState, navigate]);
 

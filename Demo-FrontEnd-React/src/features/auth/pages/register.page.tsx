@@ -12,22 +12,22 @@ import {
 } from "@mui/material";
 import { Link as RouterLink, useNavigate } from "react-router";
 import { register } from "../services/auth.service";
-import type { UserRole } from "../services/auth.service";
+import type { RegisterRole } from "../services/auth.service";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<UserRole>("ATTENDEE");
+  const [role, setRole] = useState<RegisterRole>("ATTENDEE");
   const [error, setError] = useState("");
 
   const canSubmit = useMemo(() => {
     return fullName.trim().length >= 2 && email.trim().length > 0 && password.trim().length >= 6;
   }, [fullName, email, password]);
 
-  const handleSubmit = () => {
-    const result = register({ fullName, email, password, role });
+  const handleSubmit = async () => {
+    const result = await register({ fullName, email, password, role });
     if (!result.ok) {
       setError(result.message);
       return;
@@ -55,7 +55,7 @@ const RegisterPage = () => {
               onChange={(e) => setPassword(e.target.value)}
               fullWidth
             />
-            <TextField select label="Role" value={role} onChange={(e) => setRole(e.target.value as UserRole)} fullWidth>
+            <TextField select label="Role" value={role} onChange={(e) => setRole(e.target.value as RegisterRole)} fullWidth>
               <MenuItem value="ATTENDEE">Người tham dự</MenuItem>
               <MenuItem value="ORGANIZER">Người tổ chức</MenuItem>
             </TextField>
