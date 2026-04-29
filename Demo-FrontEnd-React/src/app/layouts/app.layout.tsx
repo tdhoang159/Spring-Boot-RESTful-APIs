@@ -33,11 +33,20 @@ const AppLayout = () => {
     { label: "Vé của tôi", to: "/attendee/tickets" },
   ];
 
-  const items = user?.role === "ORGANIZER" ? organizerItems : attendeeItems;
+  const guestAttendeeItems = [
+    { label: "Trang chủ", to: "/attendee" },
+    { label: "Sự kiện", to: "/attendee/events" },
+  ];
+
+  const items = user?.role === "ORGANIZER"
+    ? organizerItems
+    : user
+      ? attendeeItems
+      : guestAttendeeItems;
 
   const handleLogout = () => {
     logout();
-    navigate("/login");
+    navigate("/attendee");
   };
 
   return (
@@ -65,16 +74,29 @@ const AppLayout = () => {
             ))}
           </Stack>
           <Stack direction="row" spacing={1}>
-            <Button
-              variant="outlined"
-              color="inherit"
-              onClick={() => navigate("/profile")}
-            >
-              Profile
-            </Button>
-            <Button variant="outlined" color="inherit" onClick={handleLogout}>
-              Logout
-            </Button>
+            {user ? (
+              <>
+                <Button
+                  variant="outlined"
+                  color="inherit"
+                  onClick={() => navigate("/profile")}
+                >
+                  Profile
+                </Button>
+                <Button variant="outlined" color="inherit" onClick={handleLogout}>
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="outlined" color="inherit" onClick={() => navigate("/login")}>
+                  Login
+                </Button>
+                <Button variant="contained" color="inherit" onClick={() => navigate("/register")} sx={{ color: "#0B3558" }}>
+                  Register
+                </Button>
+              </>
+            )}
           </Stack>
         </Toolbar>
       </AppBar>

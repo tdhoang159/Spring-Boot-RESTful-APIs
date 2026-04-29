@@ -10,6 +10,7 @@ import type {
     TicketSalesReportData,
     TicketSalesReportResponse,
 } from "../types/organizer-event.types";
+import { getAccessToken, getAuthUser } from "../../auth/services/auth-session.service";
 
 const API_BASE_URL = "http://localhost:8080/api";
 
@@ -19,7 +20,28 @@ const getFallbackOrganizerId = (): number => {
     return Number.isFinite(parsed) ? parsed : 1;
 };
 
-export const resolveOrganizerId = (): number => getFallbackOrganizerId();
+export const resolveOrganizerId = (): number => {
+    const authUser = getAuthUser();
+    if (authUser?.userId != null) {
+        return authUser.userId;
+    }
+    return getFallbackOrganizerId();
+};
+
+const getRequiredAccessToken = (): string => {
+    const token = getAccessToken();
+    if (!token) {
+        throw new Error("Bạn chưa đăng nhập hoặc phiên đăng nhập đã hết hạn.");
+    }
+    return token;
+};
+
+const createAuthHeaders = (
+    baseHeaders: Record<string, string> = {},
+): Record<string, string> => ({
+    ...baseHeaders,
+    Authorization: `Bearer ${getRequiredAccessToken()}`,
+});
 
 const parseJsonResponse = async <T>(response: Response): Promise<T> => {
     if (!response.ok) {
@@ -32,9 +54,9 @@ const parseJsonResponse = async <T>(response: Response): Promise<T> => {
 export const fetchOrganizerEvents = async (organizerId: number): Promise<OrganizerEvent[]> => {
     const response = await fetch(`${API_BASE_URL}/organizers/${organizerId}/events`, {
         method: "GET",
-        headers: {
+        headers: createAuthHeaders({
             Accept: "application/json",
-        },
+        }),
     });
 
     const body = await parseJsonResponse<OrganizerEventsResponse>(response);
@@ -126,9 +148,9 @@ export const createOrganizerEvent = async (organizerId: number, payload: CreateE
 
     const response = await fetch(`${API_BASE_URL}/organizers/${organizerId}/events`, {
         method: "POST",
-        headers: {
+        headers: createAuthHeaders({
             Accept: "application/json",
-        },
+        }),
         body: formData,
     });
     await parseJsonResponse<unknown>(response);
@@ -144,9 +166,9 @@ export const updateOrganizerEvent = async (
 
     const response = await fetch(`${API_BASE_URL}/organizers/${organizerId}/events/${eventId}`, {
         method: "PUT",
-        headers: {
+        headers: createAuthHeaders({
             Accept: "application/json",
-        },
+        }),
         body: formData,
     });
 
@@ -168,6 +190,7 @@ export const fetchCategories = async (): Promise<CategoryItem[]> => {
 export const publishOrganizerEvent = async (organizerId: number, eventId: number) => {
     const response = await fetch(`${API_BASE_URL}/organizers/${organizerId}/events/${eventId}/publish`, {
         method: "PATCH",
+        headers: createAuthHeaders(),
     });
     await parseJsonResponse<unknown>(response);
 };
@@ -175,6 +198,7 @@ export const publishOrganizerEvent = async (organizerId: number, eventId: number
 export const unpublishOrganizerEvent = async (organizerId: number, eventId: number) => {
     const response = await fetch(`${API_BASE_URL}/organizers/${organizerId}/events/${eventId}/unpublish`, {
         method: "PATCH",
+        headers: createAuthHeaders(),
     });
     await parseJsonResponse<unknown>(response);
 };
@@ -187,7 +211,7 @@ export const fetchEventRegistrations = async (
         `${API_BASE_URL}/organizers/${organizerId}/events/${eventId}/registrations`,
         {
             method: "GET",
-            headers: { Accept: "application/json" },
+            headers: createAuthHeaders({ Accept: "application/json" }),
         },
     );
     const body = await parseJsonResponse<EventRegistrationsResponse>(response);
@@ -217,7 +241,7 @@ export const fetchOrganizerEmailHistory = async (
         `${API_BASE_URL}/organizers/${organizerId}/email-history?${query}`,
         {
             method: "GET",
-            headers: { Accept: "application/json" },
+            headers: createAuthHeaders({ Accept: "application/json" }),
         },
     );
 
@@ -235,7 +259,7 @@ export const fetchTicketSalesReport = async (
     const query = queryParams.toString();
     const response = await fetch(
         `${API_BASE_URL}/organizers/${organizerId}/ticket-sales-report?${query}`,
-        { method: "GET", headers: { Accept: "application/json" } },
+        { method: "GET", headers: createAuthHeaders({ Accept: "application/json" }) },
     );
     const body = await parseJsonResponse<TicketSalesReportResponse>(response);
     return body.data;
@@ -257,7 +281,7 @@ export const sendEventEmail = async (
         `${API_BASE_URL}/organizers/${organizerId}/events/${eventId}/send-email`,
         {
             method: "POST",
-            headers: { "Content-Type": "application/json", Accept: "application/json" },
+            headers: createAuthHeaders({ "Content-Type": "application/json", Accept: "application/json" }),
             body: JSON.stringify(payload),
         },
     );
@@ -279,7 +303,7 @@ export const scanTicket = async (
 ): Promise<TicketCheckinInfo> => {
     const response = await fetch(`${API_BASE_URL}/organizers/${organizerId}/tickets/scan`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        headers: createAuthHeaders({ "Content-Type": "application/json", Accept: "application/json" }),
         body: JSON.stringify({ ticketCode, eventId: eventId ?? null }),
     });
     const body = await parseJsonResponse<CheckinApiResponse>(response);
@@ -292,7 +316,7 @@ export const checkInTicket = async (
 ): Promise<TicketCheckinInfo> => {
     const response = await fetch(`${API_BASE_URL}/organizers/${organizerId}/tickets/check-in`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        headers: createAuthHeaders({ "Content-Type": "application/json", Accept: "application/json" }),
         body: JSON.stringify({
             ticketCode: payload.ticketCode,
             eventId: payload.eventId ?? null,

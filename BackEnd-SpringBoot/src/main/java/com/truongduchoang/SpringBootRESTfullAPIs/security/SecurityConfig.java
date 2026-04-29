@@ -46,6 +46,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/events/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/sepay/webhook").permitAll()
+                    .requestMatchers("/api/organizers/**").authenticated()
                         .requestMatchers("/api/users/me/profile/**").authenticated()
                         .requestMatchers("/api/orders/**", "/api/tickets/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/sepay/qr").authenticated()
