@@ -76,13 +76,7 @@ Admin là người quản trị toàn bộ hệ thống, có quyền cao nhất.
 ## 2.1 Role: Attendee (Người tham dự)
 
 ### Use Case Diagram – Attendee
-
-```
-[ Nhúng hình ảnh: usecase-attendee.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Use Case Diagram – Attendee  
-> `![Use Case Diagram – Attendee](./diagrams/usecase-attendee.png)`
+![Use Case Diagram – Attendee](./UC_Attendee.png)
 
 ---
 
