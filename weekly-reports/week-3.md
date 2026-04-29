@@ -1,17 +1,20 @@
-**Tuần:** 3 (15/03/2026 – 21/03/2026)  
-**Giai đoạn:** Thiết kế  
-**Ngày nộp:** 21/03/2026  
-
-### 1. Công việc đã hoàn thành
-
+# Báo cáo Tuần 3
+ 
+**Tuần:** 3 (15/03/2026 – 21/03/2026)<br>
+**Nhóm:** Nhóm số 1<br>
+**Đề tài:** 6 – Quản lý sự kiện (Event Management)<br>
+**Nhóm trưởng:** Trương Đức Hoàng – MSSV: 2251012064<br>
+ 
+## 1. Công việc đã hoàn thành
+ 
 | Thành viên | MSSV | Công việc | Link Commit/PR |
 |---|---|---|---|
-| Trương Đức Hoàng | 2251012064 | Hoàn thiện full database design: ERD, schema SQL, tất cả bảng (Users, Events, Tickets, Orders, CheckIns, Categories, Notifications) | `docs/database-design-complete` |
-| Hoàng Mạnh Hùng | 2251012065 | Thiết kế API endpoints cho module Attendee (search event, get detail, register ticket), hoàn thiện wireframe | `docs/api-design-attendee` |
-| Ngô Quốc Quân | 2251012118 | Thiết kế API endpoints cho module Organizer (create event, manage ticket types, QR check-in, send email) | `docs/api-design-organizer` |
-
-### 2. Tiến độ tổng thể
-
+| Trương Đức Hoàng | 2251012064 | Thiết kế toàn bộ database (ERD, schema các bảng: User, Event, Ticket, Order, CheckIn...) | docs/database-design.md |
+| Hoàng Mạnh Hùng | 2251012065 | Thiết kế API spec cho các endpoint Attendee (search, buy ticket, QR) | docs/api-docs.md |
+| Ngô Quốc Quân | 2251012118 | Thiết kế kiến trúc hệ thống, API spec cho Organizer & Admin | docs/api-docs.md |
+ 
+## 2. Tiến độ tổng thể
+ 
 | Hạng mục | Trạng thái | % |
 |---|---|---|
 | Phân tích yêu cầu | Done | 100% |
@@ -20,15 +23,16 @@
 | Frontend UI | Chưa bắt đầu | 0% |
 | Docker | Chưa bắt đầu | 0% |
 | Testing | Chưa bắt đầu | 0% |
-
-**Tổng tiến độ: ~25%**
-
-### 3. Kế hoạch tuần tới
-
+ 
+**Tổng tiến độ:** 33%
+ 
+## 3. Kế hoạch tuần tới
+ 
 | Thành viên | Công việc dự kiến |
 |---|---|
-| Trương Đức Hoàng | Setup Spring Boot project, cấu hình database (PostgreSQL), tạo entities và repositories cho User, Category, Event |
-| Hoàng Mạnh Hùng | Tạo entities và repositories cho Ticket, Order, tích hợp Stripe/VNPay payment gateway (cơ bản) |
-| Ngô Quốc Quân | Tạo entities và repositories cho CheckIn, Notification; setup cấu trúc service layer |
-
-**Xác nhận của Nhóm trưởng:** Trương Đức Hoàng
+| Trương Đức Hoàng | Setup project Spring Boot, cấu hình DB, tạo các Entity & Repository |
+| Hoàng Mạnh Hùng | Implement User Service, Authentication (JWT) |
+| Ngô Quốc Quân | Implement Event Service (CRUD sự kiện cơ bản) |
+ 
+*Ngày nộp: 21/03/2026* &nbsp;&nbsp;&nbsp; *Xác nhận của Nhóm trưởng: Trương Đức Hoàng*
+ 
