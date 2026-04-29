@@ -369,27 +369,6 @@ Admin là người quản trị toàn bộ hệ thống, có quyền cao nhất.
 
 ### Use Case Diagram – Admin
 
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Use Case Diagram – Admin                 -->
-<!-- Tên file gợi ý: usecase-admin.png                            -->
-<!--                                                              -->
-<!-- Nội dung sơ đồ cần thể hiện:                                 -->
-<!--   Actor: Admin                                               -->
-<!--   UC1: Duyệt sự kiện mới                                    -->
-<!--   UC2: Quản lý Organizer (CRUD)                             -->
-<!--   UC3: Quản lý Categories                                    -->
-<!--   UC4: Cấu hình commission                                   -->
-<!--   UC5: Báo cáo toàn hệ thống                                 -->
-<!--   UC6: Quản lý thông báo hệ thống                           -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: usecase-admin.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Use Case Diagram – Admin  
-> `![Use Case Diagram – Admin](./diagrams/usecase-admin.png)`
-
 ---
 
 ### UC1 – Duyệt sự kiện mới
@@ -410,35 +389,9 @@ Admin là người quản trị toàn bộ hệ thống, có quyền cao nhất.
 
 #### Activity Diagram – UC1: Duyệt sự kiện
 
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Activity Diagram – Duyệt sự kiện         -->
-<!-- Tên file gợi ý: activity-adm-01-approve-event.png            -->
-<!-- Swimlane: Admin / System / Organizer                         -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: activity-adm-01-approve-event.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Activity Diagram – UC1 Duyệt sự kiện  
-> `![Activity Diagram – Duyệt sự kiện](./diagrams/activity-adm-01-approve-event.png)`
 
 #### Sequence Diagram – UC1: Duyệt sự kiện
 
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Sequence Diagram – Duyệt sự kiện         -->
-<!-- Tên file gợi ý: sequence-adm-01-approve-event.png            -->
-<!-- Các đối tượng: Admin → AdminPanel → EventController          -->
-<!--   → EventService → EventRepository → NotificationService    -->
-<!--   → Organizer (Email)                                       -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: sequence-adm-01-approve-event.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Sequence Diagram – UC1 Duyệt sự kiện  
-> `![Sequence Diagram – Duyệt sự kiện](./diagrams/sequence-adm-01-approve-event.png)`
 
 ---
 
@@ -460,31 +413,9 @@ Admin là người quản trị toàn bộ hệ thống, có quyền cao nhất.
 
 #### Activity Diagram – UC2: Quản lý Organizer
 
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Activity Diagram – Quản lý Organizer     -->
-<!-- Tên file gợi ý: activity-adm-02-manage-organizer.png         -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: activity-adm-02-manage-organizer.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Activity Diagram – UC2 Quản lý Organizer  
-> `![Activity Diagram – Quản lý Organizer](./diagrams/activity-adm-02-manage-organizer.png)`
 
 #### Sequence Diagram – UC2: Quản lý Organizer
 
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Sequence Diagram – Quản lý Organizer     -->
-<!-- Tên file gợi ý: sequence-adm-02-manage-organizer.png         -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: sequence-adm-02-manage-organizer.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Sequence Diagram – UC2 Quản lý Organizer  
-> `![Sequence Diagram – Quản lý Organizer](./diagrams/sequence-adm-02-manage-organizer.png)`
 
 ---
 
@@ -506,31 +437,9 @@ Admin là người quản trị toàn bộ hệ thống, có quyền cao nhất.
 
 #### Activity Diagram – UC3: Quản lý Categories
 
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Activity Diagram – Quản lý Categories    -->
-<!-- Tên file gợi ý: activity-adm-03-categories.png               -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: activity-adm-03-categories.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Activity Diagram – UC3 Quản lý Categories  
-> `![Activity Diagram – Quản lý Categories](./diagrams/activity-adm-03-categories.png)`
 
 #### Sequence Diagram – UC3: Quản lý Categories
 
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Sequence Diagram – Quản lý Categories    -->
-<!-- Tên file gợi ý: sequence-adm-03-categories.png               -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: sequence-adm-03-categories.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Sequence Diagram – UC3 Quản lý Categories  
-> `![Sequence Diagram – Quản lý Categories](./diagrams/sequence-adm-03-categories.png)`
 
 ---
 
@@ -552,31 +461,8 @@ Admin là người quản trị toàn bộ hệ thống, có quyền cao nhất.
 
 #### Activity Diagram – UC4: Cấu hình commission
 
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Activity Diagram – Cấu hình commission   -->
-<!-- Tên file gợi ý: activity-adm-04-commission.png               -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: activity-adm-04-commission.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Activity Diagram – UC4 Cấu hình commission  
-> `![Activity Diagram – Cấu hình commission](./diagrams/activity-adm-04-commission.png)`
 
 #### Sequence Diagram – UC4: Cấu hình commission
-
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Sequence Diagram – Cấu hình commission   -->
-<!-- Tên file gợi ý: sequence-adm-04-commission.png               -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: sequence-adm-04-commission.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Sequence Diagram – UC4 Cấu hình commission  
-> `![Sequence Diagram – Cấu hình commission](./diagrams/sequence-adm-04-commission.png)`
 
 ---
 
@@ -598,36 +484,8 @@ Admin là người quản trị toàn bộ hệ thống, có quyền cao nhất.
 
 #### Activity Diagram – UC5: Báo cáo toàn hệ thống
 
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Activity Diagram – Báo cáo toàn hệ thống -->
-<!-- Tên file gợi ý: activity-adm-05-dashboard.png                -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: activity-adm-05-dashboard.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Activity Diagram – UC5 Báo cáo toàn hệ thống  
-> `![Activity Diagram – Báo cáo toàn hệ thống](./diagrams/activity-adm-05-dashboard.png)`
-
 #### Sequence Diagram – UC5: Báo cáo toàn hệ thống
 
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Sequence Diagram – Báo cáo toàn hệ thống -->
-<!-- Tên file gợi ý: sequence-adm-05-dashboard.png                -->
-<!-- Các đối tượng: Admin → DashboardPage → ReportController      -->
-<!--   → ReportService → OrderRepository, EventRepository         -->
-<!--   → UserRepository → (aggregate) → Response                 -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: sequence-adm-05-dashboard.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Sequence Diagram – UC5 Báo cáo toàn hệ thống  
-> `![Sequence Diagram – Báo cáo toàn hệ thống](./diagrams/sequence-adm-05-dashboard.png)`
-
----
 
 ### UC6 – Quản lý thông báo hệ thống
 
@@ -647,31 +505,9 @@ Admin là người quản trị toàn bộ hệ thống, có quyền cao nhất.
 
 #### Activity Diagram – UC6: Quản lý thông báo hệ thống
 
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Activity Diagram – Quản lý thông báo     -->
-<!-- Tên file gợi ý: activity-adm-06-notifications.png            -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: activity-adm-06-notifications.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Activity Diagram – UC6 Quản lý thông báo hệ thống  
-> `![Activity Diagram – Quản lý thông báo hệ thống](./diagrams/activity-adm-06-notifications.png)`
 
 #### Sequence Diagram – UC6: Quản lý thông báo hệ thống
 
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Sequence Diagram – Quản lý thông báo     -->
-<!-- Tên file gợi ý: sequence-adm-06-notifications.png            -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: sequence-adm-06-notifications.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Sequence Diagram – UC6 Quản lý thông báo hệ thống  
-> `![Sequence Diagram – Quản lý thông báo hệ thống](./diagrams/sequence-adm-06-notifications.png)`
 
 ---
 
