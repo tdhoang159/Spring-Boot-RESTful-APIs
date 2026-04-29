@@ -103,26 +103,10 @@ Admin là người quản trị toàn bộ hệ thống, có quyền cao nhất.
 | **Ngoại lệ** | Từ khóa không hợp lệ → Hiển thị thông báo yêu cầu nhập lại |
 
 #### Activity Diagram – UC1: Tìm kiếm sự kiện
-![AD_Tìm kiếm sự kiện](./screenshots/AD_Tìm kiếm sự kiện.png)
+![Tìm kiếm sự kiện](./adTimkiemsukien.png)
 
 #### Sequence Diagram – UC1: Tìm kiếm sự kiện
-
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Sequence Diagram – Tìm kiếm sự kiện     -->
-<!-- Tên file gợi ý: sequence-att-01-search.png                   -->
-<!-- Các đối tượng tham gia:                                      -->
-<!--   Attendee → SearchPage → EventController → EventService     -->
-<!--   → EventRepository → Database                              -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: sequence-att-01-search.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Sequence Diagram – UC1 Tìm kiếm sự kiện  
-> `![Sequence Diagram – Tìm kiếm sự kiện](./diagrams/sequence-att-01-search.png)`
-
----
+![Tìm kiếm sự kiện](./sdTimkiemsukien.png)
 
 ### UC2 – Xem chi tiết sự kiện
 
@@ -141,36 +125,13 @@ Admin là người quản trị toàn bộ hệ thống, có quyền cao nhất.
 | **Ngoại lệ** | Sự kiện bị xóa hoặc ẩn → Chuyển về trang tìm kiếm với thông báo |
 
 #### Activity Diagram – UC2: Xem chi tiết sự kiện
-
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Activity Diagram – Xem chi tiết sự kiện  -->
-<!-- Tên file gợi ý: activity-att-02-detail.png                   -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: activity-att-02-detail.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Activity Diagram – UC2 Xem chi tiết sự kiện  
-> `![Activity Diagram – Xem chi tiết sự kiện](./diagrams/activity-att-02-detail.png)`
-
+![Xem chi tiết sự kiện](./adXemchitietsukien.png)
 #### Sequence Diagram – UC2: Xem chi tiết sự kiện
-
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Sequence Diagram – Xem chi tiết sự kiện  -->
-<!-- Tên file gợi ý: sequence-att-02-detail.png                   -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: sequence-att-02-detail.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Sequence Diagram – UC2 Xem chi tiết sự kiện  
-> `![Sequence Diagram – Xem chi tiết sự kiện](./diagrams/sequence-att-02-detail.png)`
+![Xem chi tiết sự kiện](./sdXemchitietsukien.png)
 
 ---
 
-### UC3 – Mua vé & thanh toán online
+### UC3 – Mua vé( tạo đơn hàng) & thanh toán
 
 #### Đặc tả Use Case
 
@@ -186,39 +147,15 @@ Admin là người quản trị toàn bộ hệ thống, có quyền cao nhất.
 | **Luồng thay thế** | 6a. Thanh toán thất bại → Huỷ đơn tạm, thông báo lỗi<br>8a. Callback timeout → Hệ thống kiểm tra lại sau 5 phút |
 | **Ngoại lệ** | Vé hết trong lúc thanh toán → Hoàn tiền, thông báo Attendee |
 
-#### Activity Diagram – UC3: Mua vé & thanh toán
+#### Activity Diagram – UC3: Mua vé( tạo đơn hàng) & thanh toán
+![Tạo đơn hàng](./adTaodonhang.png)
+---
+![Thanh toán Online](./adThanhtoanonlinefinal.png)
 
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Activity Diagram – Mua vé & thanh toán   -->
-<!-- Tên file gợi ý: activity-att-03-payment.png                  -->
-<!-- Lưu ý: Sơ đồ cần thể hiện swimlane Attendee / System /       -->
-<!--        Payment Gateway                                       -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: activity-att-03-payment.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Activity Diagram – UC3 Mua vé & thanh toán  
-> `![Activity Diagram – Mua vé & thanh toán](./diagrams/activity-att-03-payment.png)`
-
-#### Sequence Diagram – UC3: Mua vé & thanh toán
-
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Sequence Diagram – Mua vé & thanh toán   -->
-<!-- Tên file gợi ý: sequence-att-03-payment.png                  -->
-<!-- Các đối tượng: Attendee → OrderController → OrderService     -->
-<!--   → PaymentService → VNPayGateway → (callback)              -->
-<!--   → OrderService → EmailService → Attendee                  -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: sequence-att-03-payment.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Sequence Diagram – UC3 Mua vé & thanh toán  
-> `![Sequence Diagram – Mua vé & thanh toán](./diagrams/sequence-att-03-payment.png)`
-
+#### Sequence Diagram – UC3: Mua vé( tạo đơn hàng) & thanh toán
+![Tạo đơn hàng](./sdTaodonhang.png)
+---
+![Thanh toán Online](./sdThanhtoanonlinefinal.png)
 ---
 
 ### UC4 – Nhận e-ticket (QR Code)
@@ -238,85 +175,11 @@ Admin là người quản trị toàn bộ hệ thống, có quyền cao nhất.
 | **Ngoại lệ** | Lỗi tạo QR → Log lỗi, thông báo admin |
 
 #### Activity Diagram – UC4: Nhận e-ticket
-
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Activity Diagram – Nhận e-ticket         -->
-<!-- Tên file gợi ý: activity-att-04-eticket.png                  -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: activity-att-04-eticket.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Activity Diagram – UC4 Nhận e-ticket  
-> `![Activity Diagram – Nhận e-ticket](./diagrams/activity-att-04-eticket.png)`
+![Nhận e-ticket](./adNhaneticket.png)
 
 #### Sequence Diagram – UC4: Nhận e-ticket
-
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Sequence Diagram – Nhận e-ticket         -->
-<!-- Tên file gợi ý: sequence-att-04-eticket.png                  -->
-<!-- Các đối tượng: OrderService → TicketService → QRCodeService  -->
-<!--   → PDFService → EmailService → Attendee (Email)            -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: sequence-att-04-eticket.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Sequence Diagram – UC4 Nhận e-ticket  
-> `![Sequence Diagram – Nhận e-ticket](./diagrams/sequence-att-04-eticket.png)`
-
----
-
-### UC5 – Check-in bằng QR Code
-
-#### Đặc tả Use Case
-
-| Trường | Nội dung |
-|--------|----------|
-| **Mã UC** | UC-ATT-05 |
-| **Tên** | Check-in bằng QR Code |
-| **Actor** | Attendee |
-| **Mô tả** | Attendee xuất trình mã QR trên thiết bị để được Organizer quét xác nhận vào sự kiện |
-| **Tiền điều kiện** | Attendee có e-ticket hợp lệ; đang trong thời gian check-in của sự kiện |
-| **Hậu điều kiện** | Trạng thái vé chuyển thành CHECKED_IN; check-in record được ghi lại |
-| **Luồng chính** | 1. Attendee mở e-ticket trên email/ứng dụng, hiển thị mã QR<br>2. Organizer dùng thiết bị quét QR (UC-ORG-04)<br>3. Hệ thống xác thực mã QR, kiểm tra tính hợp lệ<br>4. Trả về kết quả hợp lệ → Attendee được vào sự kiện<br>5. Ghi log check-in (thời gian, thiết bị) |
-| **Luồng thay thế** | 3a. QR đã được quét trước đó → Báo "Vé đã sử dụng" |
-| **Ngoại lệ** | QR không hợp lệ / hết hạn → Báo lỗi, từ chối vào |
-
-#### Activity Diagram – UC5: Check-in bằng QR
-
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Activity Diagram – Check-in bằng QR      -->
-<!-- Tên file gợi ý: activity-att-05-checkin.png                  -->
-<!-- Swimlane: Attendee / Organizer / System                      -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: activity-att-05-checkin.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Activity Diagram – UC5 Check-in bằng QR  
-> `![Activity Diagram – Check-in bằng QR](./diagrams/activity-att-05-checkin.png)`
-
-#### Sequence Diagram – UC5: Check-in bằng QR
-
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Sequence Diagram – Check-in bằng QR      -->
-<!-- Tên file gợi ý: sequence-att-05-checkin.png                  -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: sequence-att-05-checkin.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Sequence Diagram – UC5 Check-in bằng QR  
-> `![Sequence Diagram – Check-in bằng QR](./diagrams/sequence-att-05-checkin.png)`
-
----
-
-### UC6 – Xem lịch sự kiện đã đăng ký
+![Nhận e-ticket](./sdNhaneticket.png)
+### UC5 – Xem lịch sự kiện đã đăng ký
 
 #### Đặc tả Use Case
 
@@ -332,33 +195,12 @@ Admin là người quản trị toàn bộ hệ thống, có quyền cao nhất.
 | **Luồng thay thế** | 2a. Chưa có vé nào → Gợi ý tìm kiếm sự kiện |
 | **Ngoại lệ** | Phiên đăng nhập hết hạn → Yêu cầu đăng nhập lại |
 
-#### Activity Diagram – UC6: Xem lịch sự kiện đã đăng ký
+#### Activity Diagram – UC5: Xem lịch sự kiện đã đăng ký
 
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Activity Diagram – Xem lịch sự kiện      -->
-<!-- Tên file gợi ý: activity-att-06-myevents.png                 -->
-<!-- ============================================================ -->
 
-```
-[ Nhúng hình ảnh: activity-att-06-myevents.png ]
-```
+#### Sequence Diagram – UC5: Xem lịch sự kiện đã đăng ký
 
-> ⚠️ **Chỗ nhúng hình:** Activity Diagram – UC6 Xem lịch sự kiện đã đăng ký  
-> `![Activity Diagram – Xem lịch sự kiện](./diagrams/activity-att-06-myevents.png)`
 
-#### Sequence Diagram – UC6: Xem lịch sự kiện đã đăng ký
-
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Sequence Diagram – Xem lịch sự kiện      -->
-<!-- Tên file gợi ý: sequence-att-06-myevents.png                 -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: sequence-att-06-myevents.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Sequence Diagram – UC6 Xem lịch sự kiện đã đăng ký  
-> `![Sequence Diagram – Xem lịch sự kiện](./diagrams/sequence-att-06-myevents.png)`
 
 ---
 
