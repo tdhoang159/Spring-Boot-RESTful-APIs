@@ -196,7 +196,7 @@ Admin là người quản trị toàn bộ hệ thống, có quyền cao nhất.
 | **Ngoại lệ** | Phiên đăng nhập hết hạn → Yêu cầu đăng nhập lại |
 
 #### Activity Diagram – UC5: Xem lịch sự kiện đã đăng ký
-![Xem sự kiện đã đăng ký](./adXemchititetsukiendadangky.png)
+![Xem sự kiện đã đăng ký](./adXemsukiendadangky.png)
 #### Sequence Diagram – UC5: Xem lịch sự kiện đã đăng ký
 ![Xem sự kiện đã đăng ký](./sdXemchititetsukiendadangky.png)
 
