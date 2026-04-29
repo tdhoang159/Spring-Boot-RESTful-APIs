@@ -8,10 +8,10 @@
 ## 1. Công việc đã hoàn thành
  
 | Thành viên | MSSV | Công việc | Link Commit/PR |
-|---|---|---|---|
-| Trương Đức Hoàng | 2251012064 | Viết Docker Compose, testing tích hợp toàn hệ thống, fix bug, chuẩn bị slide bảo vệ | commit/abc013 |
-| Hoàng Mạnh Hùng | 2251012065 | Hoàn thiện toàn bộ Frontend Attendee, kiểm thử end-to-end luồng mua vé & check-in QR | commit/abc014 |
-| Ngô Quốc Quân | 2251012118 | Hoàn thiện Frontend Organizer, quay video demo, viết README & tài liệu nộp bài | commit/abc015 |
+|---|---|---|---------------|
+| Trương Đức Hoàng | 2251012064 | Viết Docker Compose, testing tích hợp toàn hệ thống, fix bug, chuẩn bị slide bảo vệ |               |
+| Hoàng Mạnh Hùng | 2251012065 | Hoàn thiện toàn bộ Frontend Attendee, kiểm thử end-to-end luồng mua vé & check-in QR |               |
+| Ngô Quốc Quân | 2251012118 | Hoàn thiện Frontend Organizer, quay video demo, viết README & tài liệu nộp bài |  |
  
 ## 2. Tiến độ tổng thể
  

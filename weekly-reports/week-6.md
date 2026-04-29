@@ -9,9 +9,9 @@
  
 | Thành viên | MSSV | Công việc | Link Commit/PR |
 |---|---|---|---|
-| Trương Đức Hoàng | 2251012064 | Implement Authorization phân quyền 3 role (Admin/Organizer/Attendee), Admin API duyệt sự kiện & quản lý organizer | commit/abc007 |
-| Hoàng Mạnh Hùng | 2251012065 | API check-in QR code (Attendee), API xem lịch sự kiện đã đăng ký | commit/abc008 |
-| Ngô Quốc Quân | 2251012118 | API quét QR check-in (Organizer), tích hợp email service (gửi thông báo hàng loạt) | commit/abc009 |
+| Trương Đức Hoàng | 2251012064 | Implement Authorization phân quyền 3 role (Admin/Organizer/Attendee), Admin API duyệt sự kiện & quản lý organizer |  |
+| Hoàng Mạnh Hùng | 2251012065 | API check-in QR code (Attendee), API xem lịch sự kiện đã đăng ký |  |
+| Ngô Quốc Quân | 2251012118 | API quét QR check-in (Organizer), tích hợp email service (gửi thông báo hàng loạt) |  |
  
 ## 2. Tiến độ tổng thể
  

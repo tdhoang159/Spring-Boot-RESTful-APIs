@@ -9,9 +9,9 @@
  
 | Thành viên | MSSV | Công việc | Link Commit/PR |
 |---|---|---|---|
-| Trương Đức Hoàng | 2251012064 | Implement Order Service, tích hợp sinh QR code cho e-ticket | commit/abc004 |
-| Hoàng Mạnh Hùng | 2251012065 | API tìm kiếm sự kiện (filter category, location, date), xem chi tiết sự kiện | commit/abc005 |
-| Ngô Quốc Quân | 2251012118 | API publish/unpublish sự kiện, xem danh sách người đăng ký | commit/abc006 |
+| Trương Đức Hoàng | 2251012064 | Implement Order Service, tích hợp sinh QR code cho e-ticket |  |
+| Hoàng Mạnh Hùng | 2251012065 | API tìm kiếm sự kiện (filter category, location, date), xem chi tiết sự kiện |  |
+| Ngô Quốc Quân | 2251012118 | API publish/unpublish sự kiện, xem danh sách người đăng ký |  |
  
 ## 2. Tiến độ tổng thể
  

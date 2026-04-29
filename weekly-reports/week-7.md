@@ -9,9 +9,9 @@
  
 | Thành viên | MSSV | Công việc | Link Commit/PR |
 |---|---|---|---|
-| Trương Đức Hoàng | 2251012064 | Hoàn thiện toàn bộ Backend APIs, Frontend trang Admin (duyệt sự kiện, quản lý organizer, báo cáo) | commit/abc010 |
-| Hoàng Mạnh Hùng | 2251012065 | Frontend Attendee: trang tìm kiếm, chi tiết sự kiện, luồng thanh toán mua vé, hiển thị e-ticket QR | commit/abc011 |
-| Ngô Quốc Quân | 2251012118 | Frontend Organizer: trang tạo/sửa sự kiện, dashboard quản lý đăng ký, giao diện check-in quét QR | commit/abc012 |
+| Trương Đức Hoàng | 2251012064 | Hoàn thiện toàn bộ Backend APIs, Frontend trang Admin (duyệt sự kiện, quản lý organizer, báo cáo) |  |
+| Hoàng Mạnh Hùng | 2251012065 | Frontend Attendee: trang tìm kiếm, chi tiết sự kiện, luồng thanh toán mua vé, hiển thị e-ticket QR |  |
+| Ngô Quốc Quân | 2251012118 | Frontend Organizer: trang tạo/sửa sự kiện, dashboard quản lý đăng ký, giao diện check-in quét QR |  |
  
 ## 2. Tiến độ tổng thể
  

@@ -15,6 +15,10 @@
    - 2.1 [Role: Attendee (Người tham dự)](#21-role-attendee-người-tham-dự)
    - 2.2 [Role: Organizer (Nhà tổ chức)](#22-role-organizer-nhà-tổ-chức)
    - 2.3 [Role: Admin (Quản trị viên)](#23-role-admin-quản-trị-viên)
+3. [Chức năng hệ thống đạt được](#3-chức-năng-hệ-thống-đạt-được)
+   - 3.1 [Đăng ký, đăng nhập và hồ sơ cá nhân](#31-đăng-ký-đăng-nhập-và-hồ-sơ-cá-nhân)
+   - 3.2 [Demo chức năng Attendee](#32-demo-chức-năng-attendee)
+   - 3.3 [Demo chức năng Organizer](#33-demo-chức-năng-organizer)
 
 ---
 
@@ -76,7 +80,7 @@ Admin là người quản trị toàn bộ hệ thống, có quyền cao nhất.
 ## 2.1 Role: Attendee (Người tham dự)
 
 ### Use Case Diagram – Attendee
-![Use Case Diagram – Attendee](./UC_Attendee.png)
+![Use Case Diagram – Attendee](./screenshots/UC_Attendee.png)
 
 ---
 
@@ -97,10 +101,10 @@ Admin là người quản trị toàn bộ hệ thống, có quyền cao nhất.
 | **Ngoại lệ** | Từ khóa không hợp lệ → Hiển thị thông báo yêu cầu nhập lại |
 
 #### Activity Diagram – UC1: Tìm kiếm sự kiện
-![Tìm kiếm sự kiện](./adTimkiemsukien.png)
+![Tìm kiếm sự kiện](./screenshots/adTimkiemsukien.png)
 
 #### Sequence Diagram – UC1: Tìm kiếm sự kiện
-![Tìm kiếm sự kiện](./sdTimkiemsukien.png)
+![Tìm kiếm sự kiện](./screenshots/sdTimkiemsukien.png)
 
 ### UC2 – Xem chi tiết sự kiện
 
@@ -119,9 +123,9 @@ Admin là người quản trị toàn bộ hệ thống, có quyền cao nhất.
 | **Ngoại lệ** | Sự kiện bị xóa hoặc ẩn → Chuyển về trang tìm kiếm với thông báo |
 
 #### Activity Diagram – UC2: Xem chi tiết sự kiện
-![Xem chi tiết sự kiện](./adXemchitietsukien.png)
+![Xem chi tiết sự kiện](./screenshots/adXemchitietsukien.png)
 #### Sequence Diagram – UC2: Xem chi tiết sự kiện
-![Xem chi tiết sự kiện](./sdXemchitietsukien.png)
+![Xem chi tiết sự kiện](./screenshots/sdXemchitietsukien.png)
 
 ---
 
@@ -142,14 +146,14 @@ Admin là người quản trị toàn bộ hệ thống, có quyền cao nhất.
 | **Ngoại lệ** | Vé hết trong lúc thanh toán → Hoàn tiền, thông báo Attendee |
 
 #### Activity Diagram – UC3: Mua vé( tạo đơn hàng) & thanh toán
-![Tạo đơn hàng](./adTaodonhang.png)
+![Tạo đơn hàng](./screenshots/adTaodonhang.png)
 ---
-![Thanh toán Online](./adThanhtoanonlinefinal.png)
+![Thanh toán Online](./screenshots/adThanhtoanonlinefinal.png)
 
 #### Sequence Diagram – UC3: Mua vé( tạo đơn hàng) & thanh toán
-![Tạo đơn hàng](./sdTaodonhang.png)
+![Tạo đơn hàng](./screenshots/sdTaodonhang.png)
 ---
-![Thanh toán Online](./sdThanhtoanonlinefinal.png)
+![Thanh toán Online](./screenshots/sdThanhtoanonlinefinal.png)
 ---
 
 ### UC4 – Nhận e-ticket (QR Code)
@@ -169,10 +173,10 @@ Admin là người quản trị toàn bộ hệ thống, có quyền cao nhất.
 | **Ngoại lệ** | Lỗi tạo QR → Log lỗi, thông báo admin |
 
 #### Activity Diagram – UC4: Nhận e-ticket
-![Nhận e-ticket](./adNhaneticket.png)
+![Nhận e-ticket](./screenshots/adNhaneticket.png)
 
 #### Sequence Diagram – UC4: Nhận e-ticket
-![Nhận e-ticket](./sdNhaneticket.png)
+![Nhận e-ticket](./screenshots/sdNhaneticket.png)
 ### UC5 – Xem lịch sự kiện đã đăng ký
 
 #### Đặc tả Use Case
@@ -190,9 +194,9 @@ Admin là người quản trị toàn bộ hệ thống, có quyền cao nhất.
 | **Ngoại lệ** | Phiên đăng nhập hết hạn → Yêu cầu đăng nhập lại |
 
 #### Activity Diagram – UC5: Xem lịch sự kiện đã đăng ký
-![Xem sự kiện đã đăng ký](./adXemsukiendadangky.png)
+![Xem sự kiện đã đăng ký](./screenshots/adXemsukiendadangky.png)
 #### Sequence Diagram – UC5: Xem lịch sự kiện đã đăng ký
-![Xem sự kiện đã đăng ký](./sdXemchititetsukiendadangky.png)
+![Xem sự kiện đã đăng ký](./screenshots/sdXemchititetsukiendadangky.png)
 
 
 ---
@@ -201,27 +205,7 @@ Admin là người quản trị toàn bộ hệ thống, có quyền cao nhất.
 
 ### Use Case Diagram – Organizer
 
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Use Case Diagram – Organizer             -->
-<!-- Tên file gợi ý: usecase-organizer.png                        -->
-<!--                                                              -->
-<!-- Nội dung sơ đồ cần thể hiện:                                 -->
-<!--   Actor: Organizer                                           -->
-<!--   UC1: Tạo sự kiện & quản lý vé                             -->
-<!--   UC2: Publish / Unpublish sự kiện                          -->
-<!--   UC3: Xem danh sách đăng ký                                 -->
-<!--   UC4: Check-in người tham dự (QR)                          -->
-<!--   UC5: Gửi email thông báo                                   -->
-<!--   UC6: Báo cáo bán vé theo loại                             -->
-<!--   Dependency: UC1 «include» UC2 (phải có sự kiện mới publish)-->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: usecase-organizer.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Use Case Diagram – Organizer  
-> `![Use Case Diagram – Organizer](./diagrams/usecase-organizer.png)`
+![Use Case Diagram – Organizer](./screenshots/LLUse%20CaseOrganizerOrganizer.png)
 
 ---
 
@@ -243,34 +227,11 @@ Admin là người quản trị toàn bộ hệ thống, có quyền cao nhất.
 
 #### Activity Diagram – UC1: Tạo sự kiện & quản lý vé
 
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Activity Diagram – Tạo sự kiện           -->
-<!-- Tên file gợi ý: activity-org-01-create-event.png             -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: activity-org-01-create-event.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Activity Diagram – UC1 Tạo sự kiện & quản lý vé  
-> `![Activity Diagram – Tạo sự kiện](./diagrams/activity-org-01-create-event.png)`
+![Activity Diagram – Tạo sự kiện](./screenshots/adCreateEventOrganizerOrganizer.png)
 
 #### Sequence Diagram – UC1: Tạo sự kiện & quản lý vé
 
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Sequence Diagram – Tạo sự kiện           -->
-<!-- Tên file gợi ý: sequence-org-01-create-event.png             -->
-<!-- Các đối tượng: Organizer → EventForm → EventController       -->
-<!--   → EventService → EventRepository → NotificationService    -->
-<!--   → Admin (Email)                                           -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: sequence-org-01-create-event.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Sequence Diagram – UC1 Tạo sự kiện & quản lý vé  
-> `![Sequence Diagram – Tạo sự kiện](./diagrams/sequence-org-01-create-event.png)`
+![Sequence Diagram – Tạo sự kiện](./screenshots/sdCreateEventOrganizerOrganizer.png)
 
 ---
 
@@ -292,31 +253,11 @@ Admin là người quản trị toàn bộ hệ thống, có quyền cao nhất.
 
 #### Activity Diagram – UC2: Publish / Unpublish
 
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Activity Diagram – Publish/Unpublish      -->
-<!-- Tên file gợi ý: activity-org-02-publish.png                  -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: activity-org-02-publish.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Activity Diagram – UC2 Publish / Unpublish  
-> `![Activity Diagram – Publish/Unpublish](./diagrams/activity-org-02-publish.png)`
+![Activity Diagram – Publish/Unpublish](./screenshots/adPublishUnpublishEventOrganizerOrganizer.png)
 
 #### Sequence Diagram – UC2: Publish / Unpublish
 
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Sequence Diagram – Publish/Unpublish      -->
-<!-- Tên file gợi ý: sequence-org-02-publish.png                  -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: sequence-org-02-publish.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Sequence Diagram – UC2 Publish / Unpublish  
-> `![Sequence Diagram – Publish/Unpublish](./diagrams/sequence-org-02-publish.png)`
+![Sequence Diagram – Publish/Unpublish](./screenshots/sdPublishUnpublishEventOrganizerOrganizer.png)
 
 ---
 
@@ -338,31 +279,11 @@ Admin là người quản trị toàn bộ hệ thống, có quyền cao nhất.
 
 #### Activity Diagram – UC3: Xem danh sách đăng ký
 
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Activity Diagram – Xem danh sách đăng ký -->
-<!-- Tên file gợi ý: activity-org-03-registrations.png            -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: activity-org-03-registrations.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Activity Diagram – UC3 Xem danh sách đăng ký  
-> `![Activity Diagram – Xem danh sách đăng ký](./diagrams/activity-org-03-registrations.png)`
+![Activity Diagram – Xem danh sách đăng ký](./screenshots/adViewRegistrationsOrganizerOrganizer.png)
 
 #### Sequence Diagram – UC3: Xem danh sách đăng ký
 
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Sequence Diagram – Xem danh sách đăng ký -->
-<!-- Tên file gợi ý: sequence-org-03-registrations.png            -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: sequence-org-03-registrations.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Sequence Diagram – UC3 Xem danh sách đăng ký  
-> `![Sequence Diagram – Xem danh sách đăng ký](./diagrams/sequence-org-03-registrations.png)`
+![Sequence Diagram – Xem danh sách đăng ký](./screenshots/sdViewRegistrationsOrganizerOrganizer.png)
 
 ---
 
@@ -384,33 +305,11 @@ Admin là người quản trị toàn bộ hệ thống, có quyền cao nhất.
 
 #### Activity Diagram – UC4: Check-in người tham dự
 
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Activity Diagram – Check-in người tham dự -->
-<!-- Tên file gợi ý: activity-org-04-checkin-scanner.png          -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: activity-org-04-checkin-scanner.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Activity Diagram – UC4 Check-in người tham dự  
-> `![Activity Diagram – Check-in người tham dự](./diagrams/activity-org-04-checkin-scanner.png)`
+![Activity Diagram – Check-in người tham dự](./screenshots/adScan-CheckInTicketOrganizerOrganizer.png)
 
 #### Sequence Diagram – UC4: Check-in người tham dự
 
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Sequence Diagram – Check-in người tham dự -->
-<!-- Tên file gợi ý: sequence-org-04-checkin-scanner.png          -->
-<!-- Các đối tượng: Organizer → ScannerUI → CheckInController     -->
-<!--   → CheckInService → TicketRepository → CheckInRepository   -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: sequence-org-04-checkin-scanner.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Sequence Diagram – UC4 Check-in người tham dự  
-> `![Sequence Diagram – Check-in người tham dự](./diagrams/sequence-org-04-checkin-scanner.png)`
+![Sequence Diagram – Check-in người tham dự](./screenshots/sdScan-CheckInTicketOrganizerOrganizer.png)
 
 ---
 
@@ -432,31 +331,11 @@ Admin là người quản trị toàn bộ hệ thống, có quyền cao nhất.
 
 #### Activity Diagram – UC5: Gửi email thông báo
 
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Activity Diagram – Gửi email thông báo   -->
-<!-- Tên file gợi ý: activity-org-05-send-email.png               -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: activity-org-05-send-email.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Activity Diagram – UC5 Gửi email thông báo  
-> `![Activity Diagram – Gửi email thông báo](./diagrams/activity-org-05-send-email.png)`
+![Activity Diagram – Gửi email thông báo](./screenshots/adSendEmailOrganizerOrganizer.png)
 
 #### Sequence Diagram – UC5: Gửi email thông báo
 
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Sequence Diagram – Gửi email thông báo   -->
-<!-- Tên file gợi ý: sequence-org-05-send-email.png               -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: sequence-org-05-send-email.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Sequence Diagram – UC5 Gửi email thông báo  
-> `![Sequence Diagram – Gửi email thông báo](./diagrams/sequence-org-05-send-email.png)`
+![Sequence Diagram – Gửi email thông báo](./screenshots/sdSendEmailOrganizerOrganizer.png)
 
 ---
 
@@ -478,31 +357,11 @@ Admin là người quản trị toàn bộ hệ thống, có quyền cao nhất.
 
 #### Activity Diagram – UC6: Báo cáo bán vé
 
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Activity Diagram – Báo cáo bán vé        -->
-<!-- Tên file gợi ý: activity-org-06-report.png                   -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: activity-org-06-report.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Activity Diagram – UC6 Báo cáo bán vé  
-> `![Activity Diagram – Báo cáo bán vé](./diagrams/activity-org-06-report.png)`
+![Activity Diagram – Báo cáo bán vé](./screenshots/adTicketSaleReportOrganizerOrganizer.png)
 
 #### Sequence Diagram – UC6: Báo cáo bán vé
 
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Sequence Diagram – Báo cáo bán vé        -->
-<!-- Tên file gợi ý: sequence-org-06-report.png                   -->
-<!-- ============================================================ -->
-
-```
-[ Nhúng hình ảnh: sequence-org-06-report.png ]
-```
-
-> ⚠️ **Chỗ nhúng hình:** Sequence Diagram – UC6 Báo cáo bán vé  
-> `![Sequence Diagram – Báo cáo bán vé](./diagrams/sequence-org-06-report.png)`
+![Sequence Diagram – Báo cáo bán vé](./screenshots/sdTicketSaleReportOrganizerOrganizer.png)
 
 ---
 
@@ -813,6 +672,88 @@ Admin là người quản trị toàn bộ hệ thống, có quyền cao nhất.
 
 > ⚠️ **Chỗ nhúng hình:** Sequence Diagram – UC6 Quản lý thông báo hệ thống  
 > `![Sequence Diagram – Quản lý thông báo hệ thống](./diagrams/sequence-adm-06-notifications.png)`
+
+---
+
+## 3. Chức năng hệ thống đạt được
+
+Phần này tổng hợp các màn hình demo đã hoàn thiện của hệ thống, phản ánh các chức năng đã triển khai thực tế trên giao diện người dùng.
+
+### 3.1 Đăng ký, đăng nhập và hồ sơ cá nhân
+
+#### Đăng ký tài khoản
+![Đăng ký tài khoản](./screenshots/demo/Register.png)
+
+#### Đăng nhập hệ thống
+![Đăng nhập hệ thống](./screenshots/demo/Login.png)
+
+#### Hồ sơ cá nhân
+![Hồ sơ cá nhân](./screenshots/demo/Profile.png)
+
+---
+
+### 3.2 Demo chức năng Attendee
+
+#### Trang chủ Attendee
+![Trang chủ Attendee](./screenshots/demo/Attendee/Home%20Page.png)
+
+#### Trang danh sách sự kiện
+![Trang danh sách sự kiện](./screenshots/demo/Attendee/Events%20Page.png)
+
+#### Trang chi tiết sự kiện
+![Trang chi tiết sự kiện](./screenshots/demo/Attendee/Event%20Detail.png)
+
+#### Chức năng mua vé
+![Chức năng mua vé](./screenshots/demo/Attendee/Buy%20Ticket.png)
+
+#### Thanh toán
+![Thanh toán](./screenshots/demo/Attendee/Payment.png)
+
+#### Danh sách đơn hàng
+![Danh sách đơn hàng](./screenshots/demo/Attendee/Orders.png)
+
+#### Danh sách vé đã mua
+![Danh sách vé đã mua](./screenshots/demo/Attendee/Tickets.png)
+
+#### Mã QR của vé
+![Mã QR của vé](./screenshots/demo/Attendee/Ticket%20QR%20Code.png)
+
+---
+
+### 3.3 Demo chức năng Organizer
+
+#### Trang chủ Organizer
+![Trang chủ Organizer](./screenshots/demo/Organizer/Home%20Page.png)
+
+#### Trang quản lý sự kiện
+![Trang quản lý sự kiện](./screenshots/demo/Organizer/Events%20Page.png)
+
+#### Tạo sự kiện
+![Tạo sự kiện](./screenshots/demo/Organizer/Create%20Event.png)
+
+#### Cập nhật sự kiện
+![Cập nhật sự kiện](./screenshots/demo/Organizer/Update%20Event.png)
+
+#### Xem danh sách đăng ký
+![Xem danh sách đăng ký](./screenshots/demo/Organizer/View%20Registrations.png)
+
+#### Quét vé hợp lệ
+![Quét vé hợp lệ](./screenshots/demo/Organizer/Scan%20Ticket%20Valid.png)
+
+#### Quét vé đã sử dụng
+![Quét vé đã sử dụng](./screenshots/demo/Organizer/Scan%20Ticket%20Used.png)
+
+#### Check-in bằng QR
+![Check-in bằng QR](./screenshots/demo/Organizer/Check%20In%20QR.png)
+
+#### Gửi email cho người tham dự
+![Gửi email cho người tham dự](./screenshots/demo/Organizer/Send%20Email.png)
+
+#### Lịch sử email
+![Lịch sử email](./screenshots/demo/Organizer/Email%20History.png)
+
+#### Báo cáo bán vé theo sự kiện
+![Báo cáo bán vé theo sự kiện](./screenshots/demo/Organizer/Event%20Sale%20Report.png)
 
 ---
 

@@ -8,10 +8,10 @@
 ## 1. Công việc đã hoàn thành
  
 | Thành viên | MSSV | Công việc | Link Commit/PR |
-|---|---|---|---|
-| Trương Đức Hoàng | 2251012064 | Setup project Spring Boot, kết nối database, tạo entities (User, Event, Ticket, Order) | commit/abc001 |
-| Hoàng Mạnh Hùng | 2251012065 | Implement User Service: đăng ký, đăng nhập, JWT authentication | commit/abc002 |
-| Ngô Quốc Quân | 2251012118 | Implement Event Service: CRUD sự kiện, tạo loại vé | commit/abc003 |
+|---|---|---|--|
+| Trương Đức Hoàng | 2251012064 | Setup project Spring Boot, kết nối database, tạo entities (User, Event, Ticket, Order) |  |
+| Hoàng Mạnh Hùng | 2251012065 | Implement User Service: đăng ký, đăng nhập, JWT authentication |  |
+| Ngô Quốc Quân | 2251012118 | Implement Event Service: CRUD sự kiện, tạo loại vé |  |
  
 ## 2. Tiến độ tổng thể
  
