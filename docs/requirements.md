@@ -77,21 +77,6 @@ Admin là người quản trị toàn bộ hệ thống, có quyền cao nhất.
 
 ### Use Case Diagram – Attendee
 
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Use Case Diagram – Attendee              -->
-<!-- Gợi ý: Vẽ bằng PlantUML / draw.io rồi export PNG/SVG        -->
-<!-- Tên file gợi ý: usecase-attendee.png                         -->
-<!--                                                              -->
-<!-- Nội dung sơ đồ cần thể hiện:                                 -->
-<!--   Actor: Attendee                                            -->
-<!--   UC1: Tìm kiếm sự kiện                                     -->
-<!--   UC2: Xem chi tiết sự kiện                                  -->
-<!--   UC3: Mua vé & thanh toán online                           -->
-<!--   UC4: Nhận e-ticket (QR Code)  ← «include» từ UC3          -->
-<!--   UC5: Check-in bằng QR Code                                -->
-<!--   UC6: Xem lịch sự kiện đã đăng ký                          -->
-<!-- ============================================================ -->
-
 ```
 [ Nhúng hình ảnh: usecase-attendee.png ]
 ```
@@ -118,15 +103,7 @@ Admin là người quản trị toàn bộ hệ thống, có quyền cao nhất.
 | **Ngoại lệ** | Từ khóa không hợp lệ → Hiển thị thông báo yêu cầu nhập lại |
 
 #### Activity Diagram – UC1: Tìm kiếm sự kiện
-
-<!-- ============================================================ -->
-<!-- 🖼️ NHÚNG HÌNH ẢNH: Activity Diagram – Tìm kiếm sự kiện     -->
-<!-- Tên file gợi ý: activity-att-01-search.png                   -->
-<!-- ============================================================ -->
-
-
-
-![AD Tìm kiếm sự kiện](./screenshots/AD_Tìm kiếm sự kiện.png)
+![AD_Tìm kiếm sự kiện](./screenshots/AD_Tìm kiếm sự kiện.png)
 
 #### Sequence Diagram – UC1: Tìm kiếm sự kiện
 
