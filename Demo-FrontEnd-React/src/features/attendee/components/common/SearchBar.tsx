@@ -17,7 +17,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ defaultValue = "", onSearch }) =>
       onSearch(trimmed);
     } else {
       // Mặc định: navigate sang trang events với query
-      navigate(`/attendee/events?keyword=${encodeURIComponent(trimmed)}`);
+      navigate(`/events?keyword=${encodeURIComponent(trimmed)}`);
     }
   };
 

@@ -27,26 +27,26 @@ const AppLayout = () => {
   ];
 
   const attendeeItems = [
-    { label: "Trang chủ", to: "/attendee" },
-    { label: "Sự kiện", to: "/attendee/events" },
-    { label: "Đơn hàng của tôi", to: "/attendee/orders" },
-    { label: "Vé của tôi", to: "/attendee/tickets" },
+    { label: "Trang chủ", to: "/" },
+    { label: "Sự kiện", to: "/events" },
   ];
 
-  const guestAttendeeItems = [
-    { label: "Trang chủ", to: "/attendee" },
-    { label: "Sự kiện", to: "/attendee/events" },
+  const attendeeAuthedItems = [
+    ...attendeeItems,
+    { label: "Đơn hàng của tôi", to: "/orders" },
+    { label: "Vé của tôi", to: "/tickets" },
   ];
 
-  const items = user?.role === "ORGANIZER"
-    ? organizerItems
-    : user
-      ? attendeeItems
-      : guestAttendeeItems;
+  const items =
+    user?.role === "ORGANIZER"
+      ? organizerItems
+      : user?.role === "ATTENDEE"
+        ? attendeeAuthedItems
+        : attendeeItems;
 
   const handleLogout = () => {
     logout();
-    navigate("/attendee");
+    navigate("/");
   };
 
   return (
@@ -54,7 +54,7 @@ const AppLayout = () => {
       <AppBar position="sticky" elevation={0} sx={{ bgcolor: "#0B3558" }}>
         <Toolbar sx={{ justifyContent: "space-between", gap: 2 }}>
           <Typography variant="h6" sx={{ fontWeight: 800 }}>
-            {user?.role === "ORGANIZER" ? "Organizer Portal" : "Attendee Portal"}
+            {user?.role === "ORGANIZER" ? "Organizer Portal" : "Event Hub"}
           </Typography>
           <Stack direction="row" spacing={1} sx={{ overflowX: "auto", maxWidth: "70vw" }}>
             {items.map((item) => (
@@ -90,10 +90,10 @@ const AppLayout = () => {
             ) : (
               <>
                 <Button variant="outlined" color="inherit" onClick={() => navigate("/login")}>
-                  Login
+                  Đăng nhập
                 </Button>
-                <Button variant="contained" color="inherit" onClick={() => navigate("/register")} sx={{ color: "#0B3558" }}>
-                  Register
+                <Button variant="contained" onClick={() => navigate("/register")}>
+                  Đăng ký
                 </Button>
               </>
             )}

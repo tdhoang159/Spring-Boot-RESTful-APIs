@@ -30,7 +30,7 @@ const EventBanner: React.FC<EventBannerProps> = ({
           <div key={event.slug}>
             <div
               style={styles.slide}
-              onClick={() => navigate(`/attendee/events/${event.slug}`)}
+              onClick={() => navigate(`/events/${event.slug}`)}
             >
               {/* Background image */}
               <div

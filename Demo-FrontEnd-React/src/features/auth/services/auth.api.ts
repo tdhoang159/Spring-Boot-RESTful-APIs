@@ -23,6 +23,13 @@ export interface LoginPayload {
   password: string;
 }
 
+export interface RegisterPayload {
+  fullName: string;
+  email: string;
+  password: string;
+  role: "ATTENDEE" | "ORGANIZER";
+}
+
 const mapAuthResponse = (response: RawAuthResponse): AuthSession => ({
   accessToken: response.accessToken,
   tokenType: response.tokenType,
@@ -37,4 +44,8 @@ const mapAuthResponse = (response: RawAuthResponse): AuthSession => ({
 export const loginAPI = async (payload: LoginPayload): Promise<AuthSession> => {
   const res = await axiosInstance.post<ApiResponse<RawAuthResponse>>("/api/auth/login", payload);
   return mapAuthResponse(res.data.data);
+};
+
+export const registerAPI = async (payload: RegisterPayload): Promise<void> => {
+  await axiosInstance.post("/api/auth/register", payload);
 };

@@ -1,5 +1,5 @@
 import { clearAuthSession, getAuthUser, setAuthSession } from "./auth-session.service";
-import { loginAPI } from "./auth.api";
+import { loginAPI, registerAPI } from "./auth.api";
 
 export type UserRole = "ATTENDEE" | "ORGANIZER" | "ADMIN";
 
@@ -9,11 +9,13 @@ export type AppUser = {
   role: UserRole;
 };
 
+export type RegisterRole = Exclude<UserRole, "ADMIN">;
+
 type RegisterInput = {
   fullName: string;
   email: string;
   password: string;
-  role: UserRole;
+  role: RegisterRole;
 };
 
 type LoginInput = {
@@ -21,46 +23,16 @@ type LoginInput = {
   password: string;
 };
 
-type UserRecord = AppUser & {
-  password: string;
-};
-
-const USERS_KEY = "demo_users";
-
-const loadUsers = (): UserRecord[] => {
-  const raw = localStorage.getItem(USERS_KEY);
-  if (!raw) return [];
-
+export const register = async (input: RegisterInput): Promise<{ ok: boolean; message: string }> => {
   try {
-    return JSON.parse(raw) as UserRecord[];
-  } catch {
-    return [];
+    await registerAPI(input);
+    return { ok: true, message: "Register successful" };
+  } catch (error: any) {
+    return {
+      ok: false,
+      message: error?.response?.data?.message ?? "Register failed",
+    };
   }
-};
-
-const saveUsers = (users: UserRecord[]) => {
-  localStorage.setItem(USERS_KEY, JSON.stringify(users));
-};
-
-export const register = (input: RegisterInput): { ok: boolean; message: string } => {
-  const users = loadUsers();
-  const existed = users.some((u) => u.email.toLowerCase() === input.email.toLowerCase());
-
-  if (existed) {
-    return { ok: false, message: "Email already exists" };
-  }
-
-  const newUser: UserRecord = {
-    fullName: input.fullName,
-    email: input.email,
-    password: input.password,
-    role: input.role,
-  };
-
-  users.push(newUser);
-  saveUsers(users);
-
-  return { ok: true, message: "Register successful" };
 };
 
 export const login = async (input: LoginInput): Promise<{ ok: boolean; message: string }> => {
@@ -97,7 +69,7 @@ export const getHomePathByRole = (role: UserRole): string => {
   }
 
   if (role === "ATTENDEE") {
-    return "/attendee";
+    return "/";
   }
 
   return "/";

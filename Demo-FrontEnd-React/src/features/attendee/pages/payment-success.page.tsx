@@ -39,7 +39,7 @@ const PaymentSuccessPage: React.FC = () => {
             type="primary"
             size="large"
             style={styles.primaryBtn}
-            onClick={() => navigate("/attendee/tickets")}
+            onClick={() => navigate("/tickets")}
           >
             Xem vé của tôi
           </Button>,
@@ -47,7 +47,7 @@ const PaymentSuccessPage: React.FC = () => {
             key="home"
             size="large"
             style={styles.secondaryBtn}
-            onClick={() => navigate("/attendee")}
+            onClick={() => navigate("/")}
           >
             Về trang chủ
           </Button>,

@@ -22,7 +22,7 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public List<TicketResponse> getMyTickets(Long userId) {
-        return ticketRepository.findByOwnerUserUserIdOrderByIssuedAtDesc(userId)
+        return ticketRepository.findMyTicketsDetailed(userId)
                 .stream()
                 .map(ticketMapper::toResponse)
                 .toList();
@@ -30,7 +30,7 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public TicketResponse getMyTicketByCode(Long userId, String ticketCode) {
-        return ticketRepository.findByTicketCodeAndOwnerUserUserId(ticketCode, userId)
+        return ticketRepository.findMyTicketByCodeDetailed(ticketCode, userId)
                 .map(ticketMapper::toResponse)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Ticket not found: " + ticketCode,

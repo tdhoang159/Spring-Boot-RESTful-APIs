@@ -98,7 +98,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
                 type="primary"
                 size="small"
                 style={styles.payBtn}
-                onClick={() => navigate(`/attendee/orders/${orderCode}`)}
+                onClick={() => navigate(`/orders/${orderCode}`)}
               >
                 Thanh toán
               </Button>
@@ -106,7 +106,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
             <Button
               size="small"
               style={styles.detailBtn}
-              onClick={() => navigate(`/attendee/orders/${orderCode}`)}
+              onClick={() => navigate(`/orders/${orderCode}`)}
             >
               Chi tiết
             </Button>

@@ -17,7 +17,7 @@ const PaymentPage: React.FC = () => {
     orderId: Number.isFinite(orderId) ? orderId : undefined,
     onPaid: () => {
       window.setTimeout(() => {
-        navigate("/attendee/payment/success", {
+        navigate("/payment/success", {
           state: { orderCode, amount: totalAmount },
         });
       }, 2000);

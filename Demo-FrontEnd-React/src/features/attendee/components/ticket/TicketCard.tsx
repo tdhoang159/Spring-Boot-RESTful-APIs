@@ -57,7 +57,7 @@ const TicketCard: React.FC<TicketCardProps> = ({
         opacity: isActive ? 1 : 0.7,
         cursor: isActive ? "pointer" : "default",
       }}
-      onClick={() => isActive && navigate(`/attendee/tickets/${ticketCode}`)}
+      onClick={() => isActive && navigate(`/tickets/${ticketCode}`)}
     >
       {/* Left - banner */}
       <div style={styles.imageWrap}>

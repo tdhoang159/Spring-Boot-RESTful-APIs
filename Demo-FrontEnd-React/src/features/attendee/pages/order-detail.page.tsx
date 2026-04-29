@@ -24,7 +24,7 @@ const OrderDetailPage: React.FC = () => {
     if (!orderCode) return;
     getOrderDetailAPI(orderCode)
       .then(setOrder)
-      .catch(() => navigate("/attendee/orders"))
+      .catch(() => navigate("/orders"))
       .finally(() => setLoading(false));
   }, [orderCode]);
 
@@ -38,7 +38,7 @@ const OrderDetailPage: React.FC = () => {
 
   return (
     <div style={styles.wrap}>
-      <button style={styles.back} onClick={() => navigate("/attendee/orders")}>
+      <button style={styles.back} onClick={() => navigate("/orders")}>
         <ArrowLeftOutlined /> Đơn hàng của tôi
       </button>
 
@@ -106,7 +106,7 @@ const OrderDetailPage: React.FC = () => {
             block
             size="large"
             style={styles.payBtn}
-            onClick={() => navigate(`/attendee/payment?orderId=${order.orderId}&orderCode=${order.orderCode}&amount=${order.totalAmount}`)}
+            onClick={() => navigate(`/payment?orderId=${order.orderId}&orderCode=${order.orderCode}&amount=${order.totalAmount}`)}
           >
             Thanh toán ngay
           </Button>

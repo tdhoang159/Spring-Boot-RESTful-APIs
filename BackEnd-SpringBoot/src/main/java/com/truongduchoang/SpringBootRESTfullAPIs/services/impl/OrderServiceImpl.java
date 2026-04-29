@@ -124,7 +124,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderResponse getMyOrderByCode(String orderCode, Long userId) {
-        Order order = orderRepository.findByOrderCodeAndUserUserId(orderCode, userId)
+        Order order = orderRepository.findMyOrderByCodeWithItems(orderCode, userId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Order not found: " + orderCode, "ORDER_NOT_FOUND"));
         return orderMapper.toResponseWithoutPayment(order);
@@ -132,7 +132,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderResponse> getMyOrders(Long userId) {
-        return orderRepository.findByUserUserId(userId).stream()
+        return orderRepository.findMyOrdersWithItems(userId).stream()
                 .map(orderMapper::toResponseWithoutPayment)
                 .collect(Collectors.toList());
     }

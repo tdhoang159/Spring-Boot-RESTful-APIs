@@ -88,9 +88,7 @@ export const useOrderCheckout = () => {
         });
 
         sessionStorage.removeItem(CHECKOUT_STORAGE_KEY);
-        navigate(
-          `/attendee/payment?orderId=${order.orderId}&orderCode=${order.orderCode}&amount=${order.totalAmount}`,
-        );
+        navigate(`/payment?orderId=${order.orderId}&orderCode=${order.orderCode}&amount=${order.totalAmount}`);
         return order;
       } finally {
         setLoading(false);
