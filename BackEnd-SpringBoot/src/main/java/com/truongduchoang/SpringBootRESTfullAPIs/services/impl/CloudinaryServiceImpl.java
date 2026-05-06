@@ -1,6 +1,7 @@
 package com.truongduchoang.SpringBootRESTfullAPIs.services.impl;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +17,12 @@ import com.truongduchoang.SpringBootRESTfullAPIs.services.CloudinaryService;
 
 @Service
 public class CloudinaryServiceImpl implements CloudinaryService {
+    private static final long MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
+    private static final List<String> ALLOWED_IMAGE_CONTENT_TYPES = List.of(
+            "image/jpeg",
+            "image/png",
+            "image/webp");
+
     private final Cloudinary cloudinary;
     private final String cloudName;
     private final String apiKey;
@@ -66,9 +73,12 @@ public class CloudinaryServiceImpl implements CloudinaryService {
         if (file == null || file.isEmpty()) {
             throw new FileUploadException("Upload file is empty", "FILE_EMPTY");
         }
+        if (file.getSize() > MAX_IMAGE_SIZE_BYTES) {
+            throw new FileUploadException("Image size must not exceed 5MB", "FILE_SIZE_EXCEEDED");
+        }
         String contentType = file.getContentType();
-        if (!StringUtils.hasText(contentType) || !contentType.startsWith("image/")) {
-            throw new FileUploadException("Only image files are allowed", "FILE_TYPE_INVALID");
+        if (!StringUtils.hasText(contentType) || !ALLOWED_IMAGE_CONTENT_TYPES.contains(contentType.toLowerCase())) {
+            throw new FileUploadException("Only JPG, JPEG, PNG, or WEBP image files are allowed", "FILE_TYPE_INVALID");
         }
     }
 

@@ -28,6 +28,15 @@ import OrganizerRegistrationsPage from "../features/organizer/pages/organizer-re
 import OrganizerSalesReportPage from "../features/organizer/pages/organizer-sales-report.page";
 import OrganizerSendEmailPage from "../features/organizer/pages/organizer-send-email.page";
 import ProfilePage from "../features/shared/pages/profile.page";
+import AdminShell from "../features/admin/components/AdminShell";
+import AdminDashboardPage from "../features/admin/pages/AdminDashboardPage";
+import CategoryManagementPage from "../features/admin/pages/CategoryManagementPage";
+import CommissionConfigPage from "../features/admin/pages/CommissionConfigPage";
+import EventApprovalPage from "../features/admin/pages/EventApprovalPage";
+import NotificationManagementPage from "../features/admin/pages/NotificationManagementPage";
+import OrganizerManagementPage from "../features/admin/pages/OrganizerManagementPage";
+import SystemReportPage from "../features/admin/pages/SystemReportPage";
+import UserManagementPage from "../features/admin/pages/UserManagementPage";
 
 const RequirePortalAuth = () => {
   const location = useLocation();
@@ -99,12 +108,11 @@ const RedirectLegacyTicketDetail = () => {
 
 export const router = createBrowserRouter([
   {
-    path: "/login",
-    element: <PortalLoginPage />,
-  },
-  {
-    path: "/register",
-    element: <RegisterPage />,
+    element: <RedirectIfAuthed />,
+    children: [
+      { path: "/login", element: <PortalLoginPage /> },
+      { path: "/register", element: <RegisterPage /> },
+    ],
   },
   {
     path: "/",
@@ -153,6 +161,30 @@ export const router = createBrowserRouter([
                   { path: "sales-report", element: <OrganizerSalesReportPage /> },
                 ],
               },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    path: "/admin",
+    element: <RequirePortalAuth />,
+    children: [
+      {
+        element: <RequireRole role="ADMIN" />,
+        children: [
+          {
+            element: <AdminShell />,
+            children: [
+              { index: true, element: <AdminDashboardPage /> },
+              { path: "event-approvals", element: <EventApprovalPage /> },
+              { path: "organizers", element: <OrganizerManagementPage /> },
+              { path: "users", element: <UserManagementPage /> },
+              { path: "categories", element: <CategoryManagementPage /> },
+              { path: "commissions", element: <CommissionConfigPage /> },
+              { path: "reports", element: <SystemReportPage /> },
+              { path: "notifications", element: <NotificationManagementPage /> },
             ],
           },
         ],

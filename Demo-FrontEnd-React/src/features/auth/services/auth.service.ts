@@ -72,5 +72,5 @@ export const getHomePathByRole = (role: UserRole): string => {
     return "/";
   }
 
-  return "/";
+  return "/admin";
 };
